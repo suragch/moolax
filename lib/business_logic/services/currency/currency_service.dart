@@ -38,6 +38,6 @@ abstract class CurrencyService {
 
   Future<List<Currency>> getFavoriteCurrencies();
 
-//Future<void> saveFavoriteCurrencies(List<Currency> data);
+  Future<void> saveFavoriteCurrencies(List<Currency> data);
 }
 

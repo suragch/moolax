@@ -89,10 +89,12 @@ class StorageServiceImpl implements StorageService {
   }
 
   List<Currency> _deserializeCurrencies(String data) {
-    List<String> codeList = jsonDecode(data);
-    return codeList.map((code) {
-      Currency(code);
-    }).toList();
+    final codeList = jsonDecode(data);
+    List<Currency> list = [];
+    for (String code in codeList) {
+      list.add(Currency(code));
+    }
+    return list;
   }
 
   String _serializeCurrencies(List<Currency> data) {

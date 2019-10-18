@@ -35,11 +35,12 @@ import 'package:provider/provider.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {
   @override
-  _ChooseFavoriteCurrencyScreenState createState() => _ChooseFavoriteCurrencyScreenState();
+  _ChooseFavoriteCurrencyScreenState createState() =>
+      _ChooseFavoriteCurrencyScreenState();
 }
 
-class _ChooseFavoriteCurrencyScreenState extends State<ChooseFavoriteCurrencyScreen> {
-
+class _ChooseFavoriteCurrencyScreenState
+    extends State<ChooseFavoriteCurrencyScreen> {
   ChooseFavoritesViewModel model = serviceLocator<ChooseFavoritesViewModel>();
 
   @override
@@ -68,8 +69,12 @@ class _ChooseFavoriteCurrencyScreenState extends State<ChooseFavoriteCurrencyScr
                   ),
                   title: Text('${model.choices[index].alphabeticCode}'),
                   subtitle: Text('${model.choices[index].longName}'),
-                  trailing: Icon(Icons.favorite),
-                  onTap: () {},
+                  trailing: (model.choices[index].isFavorite)
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Icon(Icons.favorite_border),
+                  onTap: () {
+                    model.toggleFavoriteStatus(index);
+                  },
                 ),
               );
             },

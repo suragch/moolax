@@ -72,4 +72,9 @@ class CurrencyServiceImpl implements CurrencyService {
           exchangeRate: rate.exchangeRate / divisor,
         )).toList();
   }
+
+  @override
+  Future<void> saveFavoriteCurrencies(List<Currency> data) async {
+    await _storageService.saveFavoriteCurrencies(data);
+  }
 }
