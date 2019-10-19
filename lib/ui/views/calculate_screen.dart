@@ -43,10 +43,12 @@ class CalculateCurrencyScreen extends StatefulWidget {
 
 class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
   CalculateScreenViewModel model = serviceLocator<CalculateScreenViewModel>();
+  TextEditingController _controller;
 
   @override
   void initState() {
     model.loadData();
+    _controller = TextEditingController();
     super.initState();
   }
 
@@ -61,12 +63,13 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.favorite),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChooseFavoriteCurrencyScreen()),
                   );
+                  model.refreshFavorites();
                 },
               )
             ],
@@ -91,12 +94,19 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                   ),
                   child: TextField(
                     style: TextStyle(fontSize: 20),
+                    controller: _controller,
                     decoration: InputDecoration(
                       prefixIcon: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          '${model.baseCurrency.flag}',
-                          style: TextStyle(fontSize: 26),
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: SizedBox(
+                          width: 60,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${model.baseCurrency.flag}',
+                              style: TextStyle(fontSize: 30),
+                            ),
+                          ),
                         ),
                       ),
                       labelStyle: TextStyle(fontSize: 20),
@@ -118,14 +128,18 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
-                        leading: Text(
-                          '${model.quoteCurrencies[index].flag}',
-                          style: TextStyle(fontSize: 30),
+                        leading: SizedBox(
+                          width: 60,
+                          child: Text(
+                            '${model.quoteCurrencies[index].flag}',
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
                         title: Text(model.quoteCurrencies[index].longName),
                         subtitle: Text(model.quoteCurrencies[index].amount),
                         onTap: () {
-                          // TODO: change the base currency on tap
+                          model.setNewBaseCurrency(index);
+                          _controller.clear();
                         },
                       ),
                     );

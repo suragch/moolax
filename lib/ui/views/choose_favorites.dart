@@ -63,9 +63,12 @@ class _ChooseFavoriteCurrencyScreenState
             itemBuilder: (context, index) {
               return Card(
                 child: ListTile(
-                  leading: Text(
-                    '${model.choices[index].flag}',
-                    style: TextStyle(fontSize: 30),
+                  leading: SizedBox(
+                    width: 60,
+                    child: Text(
+                      '${model.choices[index].flag}',
+                      style: TextStyle(fontSize: 30),
+                    ),
                   ),
                   title: Text('${model.choices[index].alphabeticCode}'),
                   subtitle: Text('${model.choices[index].longName}'),

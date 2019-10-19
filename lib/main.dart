@@ -32,7 +32,10 @@ import 'package:flutter/material.dart';
 import 'package:moolax/service_locator.dart';
 import 'package:moolax/ui/views/calculate_screen.dart';
 
+import 'package:flutter/rendering.dart';
+
 void main() {
+  //debugPaintSizeEnabled = true;
   setupServiceLocator();
   runApp(MyApp());
 }

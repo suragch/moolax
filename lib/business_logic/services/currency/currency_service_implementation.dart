@@ -65,7 +65,7 @@ class CurrencyServiceImpl implements CurrencyService {
       return remoteData;
     }
     double divisor =
-        remoteData.firstWhere((rate) => rate.baseCurrency == base).exchangeRate;
+        remoteData.firstWhere((rate) => rate.quoteCurrency == base).exchangeRate;
     return remoteData.map((rate) => Rate(
           baseCurrency: base,
           quoteCurrency: rate.quoteCurrency,
@@ -75,6 +75,8 @@ class CurrencyServiceImpl implements CurrencyService {
 
   @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
+    if (data == null || data.length == 0)
+      return;
     await _storageService.saveFavoriteCurrencies(data);
   }
 }
