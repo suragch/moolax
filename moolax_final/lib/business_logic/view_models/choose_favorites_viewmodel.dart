@@ -35,6 +35,9 @@ import 'package:moolax/services/currency/currency_service.dart';
 import 'package:moolax/business_logic/utils/iso_data.dart';
 import 'package:moolax/services/service_locator.dart';
 
+// This class manages choosing the favorite currencies to show on the main screen.
+// It also puts the choices in a form that is easy to display on a view. It
+// knows nothing about any particular view, though.
 class ChooseFavoritesViewModel extends ChangeNotifier {
   final CurrencyService _currencyService = serviceLocator<CurrencyService>();
 

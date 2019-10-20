@@ -35,6 +35,10 @@ import 'package:moolax/business_logic/models/rate.dart';
 
 import 'web_api.dart';
 
+// This class is the concrete implementation of [WebApi]. It contains the logic
+// to get the exchange rate data from api.exchangeratesapi.io. However, no other
+// class in the app knows that, so if you wanted to swap out a different web API,
+// this is the only place you would need to make the change.
 class WebApiImpl implements WebApi {
   final _host = 'api.exchangeratesapi.io';
   final _path = 'latest';

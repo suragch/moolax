@@ -29,15 +29,21 @@
  */
 
 class IsoData {
+
+  /// Gives a flag for a three character ISO alphabetic [code].
   static flagOf(String code) {
     return data[code]['flag'] ?? '?';
   }
 
+  /// Gives the full currency name for a three character ISO alphabetic [code].
   static longNameOf(String code) {
-
     return data[code]['name'] ?? 'unknown name';
   }
 
+  // ISO data comes from https://www.iso.org/iso-4217-currency-codes.html.
+  //
+  // If you are expanding to include other currencies, then replace the 'X' with
+  // an appropriate flag.
   static final Map<String, Map<String, String>> data = {
     'AED': {'name': 'UAE Dirham', 'flag': 'X'},
     'AFN': {'name': 'Afghani', 'flag': 'X'},
@@ -219,7 +225,5 @@ class IsoData {
     'ZMW': {'name': 'Zambian Kwacha', 'flag': 'X'},
     'ZWL': {'name': 'Zimbabwe Dollar', 'flag': 'X'},
   };
-
-
 
 }

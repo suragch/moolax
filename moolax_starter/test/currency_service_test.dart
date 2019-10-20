@@ -5,6 +5,9 @@ import 'package:moolax/services/storage/storage_service.dart';
 import 'package:moolax/services/web_api/web_api.dart';
 import 'package:moolax/services/service_locator.dart';
 
+
+// These tests demonstrate how you can mock a service during testing.
+
 class MockStorageService extends Mock implements StorageService {}
 
 class MockWebApi extends Mock implements WebApi {}

@@ -35,12 +35,12 @@ import 'package:moolax/business_logic/models/rate.dart';
 import 'storage_service.dart';
 
 
-
+// This is not used in the final app, but I am leaving it in to show how you
+// could use fake data during development. This lets you work on your core business
+// logic without worrying about the details of how you will store the data locally.
+// Maybe you will used shared preferences or maybe a SQL database. That's a
+// detail that you can worry about later.
 class FakeStorageService implements StorageService {
-
-  static const sharedPrefExchangeRateKey = 'exchange_rate_key';
-  static const sharedPrefCurrencyKey = 'currency_key';
-  static const sharedPrefLastCacheTimeKey = 'cache_time_key';
 
   @override
   Future<List<Rate>> getExchangeRateData() async {

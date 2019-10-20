@@ -36,6 +36,9 @@ import 'package:moolax/services/service_locator.dart';
 
 import 'currency_service.dart';
 
+// This class is the concrete implementation of [CurrencyService]. It is a
+// wrapper around the WebApi and StorageService services. This way the view models
+// don't actually have to know anything about the web or storage details.
 class CurrencyServiceImpl implements CurrencyService {
   WebApi _webApi = serviceLocator<WebApi>();
   StorageService _storageService = serviceLocator<StorageService>();

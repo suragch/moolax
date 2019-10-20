@@ -56,7 +56,7 @@ class _ChooseFavoriteCurrencyScreenState
       child: Consumer<ChooseFavoritesViewModel>(
         builder: (context, model, child) => Scaffold(
           appBar: AppBar(
-            title: Text('Moola X'),
+            title: Text('Choose Currencies'),
           ),
           body: ListView.builder(
             itemCount: model.choices.length,

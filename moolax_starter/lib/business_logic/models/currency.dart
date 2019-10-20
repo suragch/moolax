@@ -29,24 +29,16 @@
  */
 
 
-import 'rate.dart';
-
 class Currency {
+  // Use an ISO alphabetic code.
   final String isoCode;
-  double amount;
 
+  // The amount of [isoCode] currency.
+  double amount;
 
   Currency(this.isoCode, {this.amount = 0}) {
     if (isoCode.length != 3)
       throw ArgumentError('The ISO code must have a length of 3.');
     if (amount < 0) throw ArgumentError('amount cannot be negative');
-  }
-
-  Currency convertBy(Rate rate) {
-    if (rate.baseCurrency != this.isoCode) {
-      throw ArgumentError('The base currency of the rate does not match this currency');
-    }
-    final convertedAmount = amount * rate.exchangeRate;
-    return Currency(isoCode, amount: convertedAmount);
   }
 }

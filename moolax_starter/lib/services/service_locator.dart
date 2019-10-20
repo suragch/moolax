@@ -39,6 +39,8 @@ import 'web_api/web_api_implementation.dart';
 import '../business_logic/view_models/calculate_screen_viewmodel.dart';
 import '../business_logic/view_models/choose_favorites_viewmodel.dart';
 
+// Using GetIt is a convenient way to provide services and view models
+// anywhere we need them in the app.
 GetIt serviceLocator = GetIt.instance;
 
 void setupServiceLocator() {

@@ -35,6 +35,8 @@ import 'package:moolax/services/currency/currency_service.dart';
 import 'package:moolax/business_logic/utils/iso_data.dart';
 import 'package:moolax/services/service_locator.dart';
 
+// This class handles the currency conversion and puts it in a form convenient
+// for displaying on a view (though it known nothing about any particular view).
 class CalculateScreenViewModel extends ChangeNotifier {
   final CurrencyService _currencyService = serviceLocator<CurrencyService>();
 
@@ -74,7 +76,7 @@ class CalculateScreenViewModel extends ChangeNotifier {
     );
   }
 
-  _loadQuoteCurrencies(List<Currency> currencies) {
+  List<CurrencyPresentation> _loadQuoteCurrencies(List<Currency> currencies) {
     List<CurrencyPresentation> quotes = [];
     for (int i = 1; i < currencies.length; i++) {
       String code = currencies[i].isoCode;
@@ -143,9 +145,10 @@ class CalculateScreenViewModel extends ChangeNotifier {
     }
     return currencies;
   }
-
 }
 
+// A model class specifically for displaying data in a view. Everything is a
+// preformatted string.
 class CurrencyPresentation {
   final String flag;
   final String alphabeticCode;
