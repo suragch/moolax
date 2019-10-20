@@ -1,10 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:moolax/business_logic/services/currency/currency_service.dart';
-import 'package:moolax/business_logic/services/currency/currency_service_implementation.dart';
-import 'package:moolax/business_logic/services/storage/storage_service.dart';
-import 'package:moolax/business_logic/services/web_api/web_api.dart';
-import 'package:moolax/service_locator.dart';
+import 'package:moolax/services/currency/currency_service_implementation.dart';
+import 'package:moolax/services/storage/storage_service.dart';
+import 'package:moolax/services/web_api/web_api.dart';
+import 'package:moolax/services/service_locator.dart';
 
 class MockStorageService extends Mock implements StorageService {}
 
@@ -56,24 +55,4 @@ void main() {
     },
   );
 
-//  test(
-//    'should return all exchange rates when network is connected and cache expired',
-//        () async {
-//      // arrange
-//      var mockStorageService = MockStorageService();
-//      when(mockStorageService.getFavoriteCurrencies()).thenAnswer((_) => Future.value([]));
-//      serviceLocator.registerSingleton<StorageService>(mockStorageService);
-//
-////      var mockWebApi = MockWebApi();
-////      when(mockWebApi.getExchangeRateData()).thenAnswer((_) => Future.value(null));
-////      serviceLocator.registerSingleton<WebApi>(mockWebApi);
-//
-//      // act
-//      final currencyService = CurrencyServiceImpl();
-//      final favorites = await currencyService.getAllExchangeRates();
-//
-//      // assert
-//      expect(favorites, CurrencyServiceImpl.defaultFavorites);
-//    },
-//  );
 }

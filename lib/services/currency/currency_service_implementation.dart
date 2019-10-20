@@ -30,9 +30,9 @@
 
 import 'package:moolax/business_logic/models/currency.dart';
 import 'package:moolax/business_logic/models/rate.dart';
-import 'package:moolax/business_logic/services/storage/storage_service.dart';
-import 'package:moolax/business_logic/services/web_api/web_api.dart';
-import 'package:moolax/service_locator.dart';
+import 'package:moolax/services/storage/storage_service.dart';
+import 'package:moolax/services/web_api/web_api.dart';
+import 'package:moolax/services/service_locator.dart';
 
 import 'currency_service.dart';
 
@@ -40,7 +40,7 @@ class CurrencyServiceImpl implements CurrencyService {
   WebApi _webApi = serviceLocator<WebApi>();
   StorageService _storageService = serviceLocator<StorageService>();
 
-  static final defaultFavorites = [Currency('EUR'), Currency('USD'), Currency('BGN')];
+  static final defaultFavorites = [Currency('EUR'), Currency('USD')];
 
   @override
   Future<List<Rate>> getAllExchangeRates({String base}) async {

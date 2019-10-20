@@ -30,7 +30,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:moolax/business_logic/view_models/choose_favorites_viewmodel.dart';
-import 'package:moolax/service_locator.dart';
+import 'package:moolax/services/service_locator.dart';
 import 'package:provider/provider.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {

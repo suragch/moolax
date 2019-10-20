@@ -31,9 +31,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:moolax/business_logic/models/currency.dart';
 import 'package:moolax/business_logic/models/rate.dart';
-import 'package:moolax/business_logic/services/currency/currency_service.dart';
-import 'package:moolax/business_logic/utils/IsoData.dart';
-import 'package:moolax/service_locator.dart';
+import 'package:moolax/services/currency/currency_service.dart';
+import 'package:moolax/business_logic/utils/iso_data.dart';
+import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoritesViewModel extends ChangeNotifier {
   final CurrencyService _currencyService = serviceLocator<CurrencyService>();

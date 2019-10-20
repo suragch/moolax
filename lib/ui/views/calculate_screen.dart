@@ -30,7 +30,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:moolax/business_logic/view_models/calculate_screen_viewmodel.dart';
-import 'package:moolax/service_locator.dart';
+import 'package:moolax/services/service_locator.dart';
 import 'package:provider/provider.dart';
 
 import 'choose_favorites.dart';
