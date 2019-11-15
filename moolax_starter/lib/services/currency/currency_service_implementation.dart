@@ -30,71 +30,56 @@
 
 import 'package:moolax/business_logic/models/currency.dart';
 import 'package:moolax/business_logic/models/rate.dart';
-import 'package:moolax/services/currency/currency_service.dart';
-import 'package:moolax/business_logic/utils/iso_data.dart';
+import 'package:moolax/services/storage/storage_service.dart';
+import 'package:moolax/services/web_api/web_api.dart';
 import 'package:moolax/services/service_locator.dart';
 
-// 1
-import 'package:flutter/foundation.dart';
+import 'currency_service.dart';
 
-// 2
-class ChooseFavoritesViewModel extends ChangeNotifier {
+// This class is the concrete implementation of [CurrencyService]. It is a
+// wrapper around the WebApi and StorageService services. This way the view models
+// don't actually have to know anything about the web or storage details.
+class CurrencyServiceImpl implements CurrencyService {
+  WebApi _webApi = serviceLocator<WebApi>();
+  StorageService _storageService = serviceLocator<StorageService>();
 
-  // 3
-  final CurrencyService _currencyService = serviceLocator<CurrencyService>();
+  static final defaultFavorites = [Currency('EUR'), Currency('USD')];
 
-  List<FavoritePresentation> _choices = [];
-  List<Currency> _favorites = [];
-
-  // 4
-  List<FavoritePresentation> get choices => _choices;
-
-  void loadData() async {
-    final rates = await _currencyService.getAllExchangeRates();
-    _favorites = await _currencyService.getFavoriteCurrencies();
-    _prepareChoicePresentation(rates);
-    notifyListeners();
-  }
-
-  void _prepareChoicePresentation(List<Rate> rates) {
-    List<FavoritePresentation> list = [];
-    for (Rate rate in rates) {
-      String code = rate.quoteCurrency;
-      bool isFavorite = _getFavoriteStatus(code);
-      list.add(FavoritePresentation(
-        flag: IsoData.flagOf(code),
-        alphabeticCode: code,
-        longName: IsoData.longNameOf(code),
-        isFavorite: isFavorite,
-      ));
+  @override
+  Future<List<Rate>> getAllExchangeRates({String base}) async {
+    List<Rate> webData = await _webApi.fetchExchangeRates();
+    if (base != null) {
+      return _convertBaseCurrency(base, webData);
     }
-    _choices = list;
+    return webData;
   }
 
-  bool _getFavoriteStatus(String code) {
-    for (Currency currency in _favorites) {
-      if (code == currency.isoCode)
-        return true;
+  @override
+  Future<List<Currency>> getFavoriteCurrencies() async {
+    final favorites = await _storageService.getFavoriteCurrencies();
+    if (favorites == null || favorites.length <= 1) {
+      return defaultFavorites;
     }
-    return false;
+    return favorites;
   }
 
-  void toggleFavoriteStatus(int choiceIndex) {
-    // ...
-
-    // 5
-    notifyListeners();
+  List<Rate> _convertBaseCurrency(String base, List<Rate> remoteData) {
+    if (remoteData[0].baseCurrency == base) {
+      return remoteData;
+    }
+    double divisor =
+        remoteData.firstWhere((rate) => rate.quoteCurrency == base).exchangeRate;
+    return remoteData.map((rate) => Rate(
+          baseCurrency: base,
+          quoteCurrency: rate.quoteCurrency,
+          exchangeRate: rate.exchangeRate / divisor,
+        )).toList();
   }
 
-}
-
-// 6
-class FavoritePresentation {
-  final String flag;
-  final String alphabeticCode;
-  final String longName;
-  bool isFavorite;
-
-  FavoritePresentation(
-      {this.flag, this.alphabeticCode, this.longName, this.isFavorite,});
+  @override
+  Future<void> saveFavoriteCurrencies(List<Currency> data) async {
+    if (data == null || data.length == 0)
+      return;
+    await _storageService.saveFavoriteCurrencies(data);
+  }
 }

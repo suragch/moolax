@@ -41,10 +41,10 @@ import 'package:moolax/services/service_locator.dart';
 class ChooseFavoritesViewModel extends ChangeNotifier {
   final CurrencyService _currencyService = serviceLocator<CurrencyService>();
 
-  List<RatePresentation> _choices = [];
+  List<FavoritePresentation> _choices = [];
   List<Currency> _favorites = [];
 
-  List<RatePresentation> get choices => _choices;
+  List<FavoritePresentation> get choices => _choices;
 
   void loadData() async {
     final rates = await _currencyService.getAllExchangeRates();
@@ -54,11 +54,11 @@ class ChooseFavoritesViewModel extends ChangeNotifier {
   }
 
   void _prepareChoicePresentation(List<Rate> rates) {
-    List<RatePresentation> list = [];
+    List<FavoritePresentation> list = [];
     for (Rate rate in rates) {
       String code = rate.quoteCurrency;
       bool isFavorite = _getFavoriteStatus(code);
-      list.add(RatePresentation(
+      list.add(FavoritePresentation(
         flag: IsoData.flagOf(code),
         alphabeticCode: code,
         longName: IsoData.longNameOf(code),
@@ -111,12 +111,12 @@ class ChooseFavoritesViewModel extends ChangeNotifier {
   }
 }
 
-class RatePresentation {
+class FavoritePresentation {
   final String flag;
   final String alphabeticCode;
   final String longName;
   bool isFavorite;
 
-  RatePresentation(
+  FavoritePresentation(
       {this.flag, this.alphabeticCode, this.longName, this.isFavorite,});
 }

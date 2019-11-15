@@ -28,33 +28,64 @@
  * THE SOFTWARE.
  */
 
-import 'package:get_it/get_it.dart';
-import 'currency/currency_service.dart';
 
-import 'currency/currency_service_implementation.dart';
-import 'storage/storage_service.dart';
-import 'storage/storage_service_implementation.dart';
-import 'web_api/web_api.dart';
-//import 'web_api/web_api_implementation.dart';
-import '../business_logic/view_models/calculate_screen_viewmodel.dart';
-import '../business_logic/view_models/choose_favorites_viewmodel.dart';
+import 'package:moolax/business_logic/models/currency.dart';
+import 'package:moolax/business_logic/models/rate.dart';
 
-// Using GetIt is a convenient way to provide services and view models
-// anywhere we need them in the app.
-GetIt serviceLocator = GetIt.instance;
+import 'storage_service.dart';
 
-void setupServiceLocator() {
-  // services
-  //serviceLocator.registerLazySingleton<WebApi>(() => WebApiImpl());
-  serviceLocator.registerLazySingleton<StorageService>(() => StorageServiceImpl());
-  serviceLocator.registerLazySingleton<CurrencyService>(() => CurrencyServiceImpl());
 
-  // You can replace the actual services above with fake implementations during development.
-  //
-  // serviceLocator.registerLazySingleton<WebApi>(() => FakeWebApi());
-  // serviceLocator.registerLazySingleton<StorageService>(() => FakeStorageService());
+// This is not used in the final app, but I am leaving it in to show how you
+// could use fake data during development. This lets you work on your core business
+// logic without worrying about the details of how you will store the data locally.
+// Maybe you will used shared preferences or maybe a SQL database. That's a
+// detail that you can worry about later.
+class FakeStorageService implements StorageService {
 
-  // view models
-  serviceLocator.registerFactory<CalculateScreenViewModel>(() => CalculateScreenViewModel());
-  serviceLocator.registerFactory<ChooseFavoritesViewModel>(() => ChooseFavoritesViewModel());
+  @override
+  Future<List<Rate>> getExchangeRateData() async {
+    List<Rate> list = [];
+    list.add(Rate(
+      baseCurrency: 'USD',
+      quoteCurrency: 'EUR',
+      exchangeRate: 0.91,
+    ));
+    list.add(Rate(
+      baseCurrency: 'USD',
+      quoteCurrency: 'CNY',
+      exchangeRate: 7.05,
+    ));
+    list.add(Rate(
+      baseCurrency: 'USD',
+      quoteCurrency: 'MNT',
+      exchangeRate: 2668.37,
+    ));
+    return list;
+  }
+
+  @override
+  Future cacheExchangeRateData(List<Rate> data) {
+    return null;
+  }
+
+  @override
+  Future<List<Currency>> getFavoriteCurrencies() async {
+    List<Currency> list = [];
+    list.add(Currency('USD', amount: 0.0));
+    list.add(Currency('EUR', amount: 0.0));
+    list.add(Currency('CNY', amount: 0.0));
+    list.add(Currency('MNT', amount: 0.0));
+    return list;
+  }
+
+  @override
+  Future saveFavoriteCurrencies(List<Currency> data) {
+    return null;
+  }
+
+  @override
+  Future<bool> isExpiredCache() async {
+    return false;
+  }
+
 }
