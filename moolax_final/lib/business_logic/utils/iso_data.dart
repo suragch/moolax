@@ -138,7 +138,7 @@ class IsoData {
     'MGA': {'name': 'Malagasy Ariary', 'flag': 'X'},
     'MKD': {'name': 'Denar', 'flag': 'X'},
     'MMK': {'name': 'Kyat', 'flag': 'X'},
-    'MNT': {'name': 'Tugrik', 'flag': 'X'},
+    'MNT': {'name': 'Tugrik', 'flag': '🇲🇳'},
     'MOP': {'name': 'Pataca', 'flag': 'X'},
     'MRU': {'name': 'Ouguiya', 'flag': 'X'},
     'MUR': {'name': 'Mauritius Rupee', 'flag': 'X'},

@@ -50,33 +50,10 @@ class ChooseFavoritesViewModel extends ChangeNotifier {
   List<FavoritePresentation> get choices => _choices;
 
   void loadData() async {
-    final rates = await _currencyService.getAllExchangeRates();
-    _favorites = await _currencyService.getFavoriteCurrencies();
-    _prepareChoicePresentation(rates);
+    // ...
+
+    // 5
     notifyListeners();
-  }
-
-  void _prepareChoicePresentation(List<Rate> rates) {
-    List<FavoritePresentation> list = [];
-    for (Rate rate in rates) {
-      String code = rate.quoteCurrency;
-      bool isFavorite = _getFavoriteStatus(code);
-      list.add(FavoritePresentation(
-        flag: IsoData.flagOf(code),
-        alphabeticCode: code,
-        longName: IsoData.longNameOf(code),
-        isFavorite: isFavorite,
-      ));
-    }
-    _choices = list;
-  }
-
-  bool _getFavoriteStatus(String code) {
-    for (Currency currency in _favorites) {
-      if (code == currency.isoCode)
-        return true;
-    }
-    return false;
   }
 
   void toggleFavoriteStatus(int choiceIndex) {
