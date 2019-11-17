@@ -28,21 +28,27 @@
  * THE SOFTWARE.
  */
 
-import 'package:get_it/get_it.dart';
-import 'currency/currency_service.dart';
-import 'currency/currency_service_fake.dart';
-import 'storage/storage_service.dart';
-import 'storage/storage_service_implementation.dart';
-import '../business_logic/view_models/calculate_screen_viewmodel.dart';
-import '../business_logic/view_models/choose_favorites_viewmodel.dart';
+import 'package:moolax/business_logic/models/currency.dart';
+import 'package:moolax/business_logic/models/rate.dart';
 
-GetIt serviceLocator = GetIt.instance;
+import 'currency_service.dart';
 
-void setupServiceLocator() {
+// This class is just used temporarily during the tutorial so that the app can
+// run without crashing before the WebApi service is finished.
+class CurrencyServiceFake implements CurrencyService {
 
-  serviceLocator.registerLazySingleton<StorageService>(() => StorageServiceImpl());
-  serviceLocator.registerLazySingleton<CurrencyService>(() => CurrencyServiceFake());
+  @override
+  Future<List<Rate>> getAllExchangeRates({String base}) async {
+    return [];
+  }
 
-  serviceLocator.registerFactory<CalculateScreenViewModel>(() => CalculateScreenViewModel());
-  serviceLocator.registerFactory<ChooseFavoritesViewModel>(() => ChooseFavoritesViewModel());
+  @override
+  Future<List<Currency>> getFavoriteCurrencies() async {
+    return [];
+  }
+
+  @override
+  Future<void> saveFavoriteCurrencies(List<Currency> data) async {
+
+  }
 }

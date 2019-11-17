@@ -53,6 +53,7 @@ void setupServiceLocator() {
   //
   // serviceLocator.registerLazySingleton<WebApi>(() => FakeWebApi());
   // serviceLocator.registerLazySingleton<StorageService>(() => FakeStorageService());
+  // serviceLocator.registerLazySingleton<CurrencyService>(() => CurrencyServiceFake());
 
   // view models
   serviceLocator.registerFactory<CalculateScreenViewModel>(() => CalculateScreenViewModel());
