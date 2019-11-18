@@ -62,10 +62,8 @@ class ChooseFavoritesViewModel extends ChangeNotifier {
     // 5
     notifyListeners();
   }
-
 }
 
-// 6
 class FavoritePresentation {
   final String flag;
   final String alphabeticCode;

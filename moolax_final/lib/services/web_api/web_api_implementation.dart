@@ -65,19 +65,13 @@ class WebApiImpl implements WebApi {
     List<Rate> list = [];
 
     // include the base currency in the list
-    list.add(Rate(
-      baseCurrency: base,
-      quoteCurrency: base,
-      exchangeRate: 1.0,
-    ));
+    list.add(Rate(baseCurrency: base, quoteCurrency: base, exchangeRate: 1.0));
 
     // add all of the quote currency conversion rates
     for (var rate in rates.entries) {
-      list.add(Rate(
-        baseCurrency: base,
-        quoteCurrency: rate.key,
-        exchangeRate: rate.value as double,
-      ));
+      list.add(Rate(baseCurrency: base,
+          quoteCurrency: rate.key,
+          exchangeRate: rate.value as double));
     }
 
     return list;

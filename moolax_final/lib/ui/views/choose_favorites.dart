@@ -51,37 +51,41 @@ class _ChooseFavoriteCurrencyScreenState
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Choose Currencies'),
+      ),
+      body: buildListView(model),
+    );
+  }
+
+  Widget buildListView(ChooseFavoritesViewModel viewModel) {
     return ChangeNotifierProvider<ChooseFavoritesViewModel>(
-      builder: (context) => model,
+      builder: (context) => viewModel,
       child: Consumer<ChooseFavoritesViewModel>(
-        builder: (context, model, child) => Scaffold(
-          appBar: AppBar(
-            title: Text('Choose Currencies'),
-          ),
-          body: ListView.builder(
-            itemCount: model.choices.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 60,
-                    child: Text(
-                      '${model.choices[index].flag}',
-                      style: TextStyle(fontSize: 30),
-                    ),
+        builder: (context, model, child) => ListView.builder(
+          itemCount: model.choices.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                leading: SizedBox(
+                  width: 60,
+                  child: Text(
+                    '${model.choices[index].flag}',
+                    style: TextStyle(fontSize: 30),
                   ),
-                  title: Text('${model.choices[index].alphabeticCode}'),
-                  subtitle: Text('${model.choices[index].longName}'),
-                  trailing: (model.choices[index].isFavorite)
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border),
-                  onTap: () {
-                    model.toggleFavoriteStatus(index);
-                  },
                 ),
-              );
-            },
-          ),
+                title: Text('${model.choices[index].alphabeticCode}'),
+                subtitle: Text('${model.choices[index].longName}'),
+                trailing: (model.choices[index].isFavorite)
+                    ? Icon(Icons.favorite, color: Colors.red)
+                    : Icon(Icons.favorite_border),
+                onTap: () {
+                  model.toggleFavoriteStatus(index);
+                },
+              ),
+            );
+          },
         ),
       ),
     );
