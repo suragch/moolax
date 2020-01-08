@@ -61,7 +61,7 @@ class _ChooseFavoriteCurrencyScreenState
 
   Widget buildListView(ChooseFavoritesViewModel viewModel) {
     return ChangeNotifierProvider<ChooseFavoritesViewModel>(
-      builder: (context) => viewModel,
+      create: (context) => viewModel,
       child: Consumer<ChooseFavoritesViewModel>(
         builder: (context, model, child) => ListView.builder(
           itemCount: model.choices.length,

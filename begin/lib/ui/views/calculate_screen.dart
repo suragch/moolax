@@ -55,7 +55,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CalculateScreenViewModel>(
-      builder: (context) => model,
+      create: (context) => model,
       child: Consumer<CalculateScreenViewModel>(
         builder: (context, model, child) => Scaffold(
           appBar: AppBar(
