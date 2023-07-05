@@ -3,6 +3,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,26 +40,26 @@ class WebApiImpl implements WebApi {
   }
 
   List<Rate> _createRateListFromRawMap(dynamic jsonObject) {
-    final rates = jsonObject['rates'] as Map<String, String>;
-    final base = jsonObject['base'] as String;
+    final rates = jsonObject['rates'];
     List<Rate> list = [];
 
-    // include the base currency in the list (new api includes it)
-    // list.add(Rate(
-    //   baseCurrency: base,
-    //   quoteCurrency: base,
-    //   exchangeRate: 1.0,
-    // ));
+    if (rates is! Map<String, dynamic>) return list;
 
-    // add all of the quote currency conversion rates
-    for (var rate in rates.entries) {
-      list.add(
-        Rate(
-          baseCurrency: base,
-          quoteCurrency: rate.key,
-          exchangeRate: rate.value as double,
-        ),
-      );
+    final base = jsonObject['base'] as String;
+    for (final entry in rates.entries) {
+      final quote = entry.key;
+      try {
+        final rate = (entry.value as num).toDouble();
+        list.add(
+          Rate(
+            baseCurrency: base,
+            quoteCurrency: quote,
+            exchangeRate: rate,
+          ),
+        );
+      } on Exception catch (e) {
+        debugPrint(e.toString());
+      }
     }
 
     return list;
