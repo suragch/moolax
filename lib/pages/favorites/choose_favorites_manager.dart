@@ -22,11 +22,11 @@ class ChooseFavoritesManager extends ChangeNotifier {
   void loadData() async {
     final rates = await _currencyService.getAllExchangeRates();
     _favorites = await _currencyService.getFavoriteCurrencies();
-    _prepareChoicePresentation(rates);
+    _choices = _prepareChoicePresentation(rates);
     notifyListeners();
   }
 
-  void _prepareChoicePresentation(List<Rate> rates) {
+  List<FavoritePresentation> _prepareChoicePresentation(List<Rate> rates) {
     List<FavoritePresentation> list = [];
     for (Rate rate in rates) {
       String code = rate.quoteCurrency;
@@ -38,7 +38,7 @@ class ChooseFavoritesManager extends ChangeNotifier {
         isFavorite: isFavorite,
       ));
     }
-    _choices = list;
+    return list;
   }
 
   bool _getFavoriteStatus(String code) {

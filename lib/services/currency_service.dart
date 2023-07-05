@@ -21,7 +21,7 @@ class CurrencyServiceImpl implements CurrencyService {
 
   @override
   Future<List<Rate>> getAllExchangeRates({String? base}) async {
-    List<Rate> webData = await _webApi.fetchExchangeRates();
+    final webData = await _webApi.fetchExchangeRates();
     if (base != null) {
       return _convertBaseCurrency(base, webData);
     }

@@ -17,13 +17,18 @@ class CalculateScreenManager extends ChangeNotifier {
   List<CurrencyPresentation> _quoteCurrencies = [];
   List<Rate> _rates = [];
 
-  static final CurrencyPresentation defaultBaseCurrency = CurrencyPresentation(
-      flag: '', alphabeticCode: '', longName: '', amount: '');
+  static final defaultBaseCurrency = CurrencyPresentation(
+    flag: '',
+    alphabeticCode: '',
+    longName: '',
+    amount: '',
+  );
 
   void loadData() async {
     await _loadCurrencies();
     _rates = await _currencyService.getAllExchangeRates(
-        base: _baseCurrency.alphabeticCode);
+      base: _baseCurrency.alphabeticCode,
+    );
     notifyListeners();
   }
 
@@ -39,10 +44,11 @@ class CalculateScreenManager extends ChangeNotifier {
     }
     String code = currencies[0].isoCode;
     return CurrencyPresentation(
-        flag: IsoData.flagOf(code),
-        alphabeticCode: code,
-        longName: IsoData.longNameOf(code),
-        amount: '');
+      flag: IsoData.flagOf(code),
+      alphabeticCode: code,
+      longName: IsoData.longNameOf(code),
+      amount: '',
+    );
   }
 
   List<CurrencyPresentation> _loadQuoteCurrencies(List<Currency> currencies) {

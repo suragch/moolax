@@ -2,7 +2,7 @@
 /// See LICENSE for details.
 
 import 'package:get_it/get_it.dart';
-import 'package:moolax/pages/favorites/choose_favorites_viewmodel.dart';
+import 'package:moolax/pages/favorites/choose_favorites_manager.dart';
 import 'package:moolax/pages/home/calculate_screen_manager.dart';
 import 'currency_service.dart';
 
