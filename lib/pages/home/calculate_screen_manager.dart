@@ -99,17 +99,18 @@ class CalculateScreenManager extends ChangeNotifier {
     }
   }
 
-  Future refreshFavorites() async {
+  Future<void> refreshFavorites() async {
     await _loadCurrencies();
     notifyListeners();
   }
 
-  Future setNewBaseCurrency(int quoteCurrencyIndex) async {
-    _quoteCurrencies.add(_baseCurrency);
+  Future<void> setNewBaseCurrency(int quoteCurrencyIndex) async {
+    final oldBaseCurrency = _baseCurrency;
     _baseCurrency = _quoteCurrencies[quoteCurrencyIndex];
     _quoteCurrencies.removeAt(quoteCurrencyIndex);
-    await _currencyService
-        .saveFavoriteCurrencies(_convertPresentationToCurrency());
+    _quoteCurrencies.insert(0, oldBaseCurrency);
+    final wholeList = _convertPresentationToCurrency();
+    await _currencyService.saveFavoriteCurrencies(wholeList);
     loadData();
   }
 

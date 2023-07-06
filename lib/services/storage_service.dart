@@ -55,6 +55,7 @@ class StorageServiceImpl implements StorageService {
     if (data == '') {
       return [];
     }
+    print('getFavoriteCurrencies: $data');
     return _deserializeCurrencies(data);
   }
 
@@ -62,8 +63,9 @@ class StorageServiceImpl implements StorageService {
     List<Currency> list = [];
     try {
       final codeList = jsonDecode(json);
-      if (codeList is! List<String>) return list;
-      for (String code in codeList) {
+      if (codeList is! List) return list;
+      for (final code in codeList) {
+        if (code is! String) continue;
         list.add(Currency(code));
       }
     } on Exception catch (e) {
@@ -75,6 +77,7 @@ class StorageServiceImpl implements StorageService {
   @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) {
     String jsonString = _serializeCurrencies(data);
+    print('saveFavoriteCurrencies: $jsonString');
     return _saveToPreferences(sharedPrefCurrencyKey, jsonString);
   }
 
