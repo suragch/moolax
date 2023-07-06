@@ -31,25 +31,21 @@ class _ChooseFavoriteCurrencyScreenState
         children: [
           Padding(
             padding:
-                const EdgeInsets.only(top: 32, left: 32, right: 32, bottom: 32),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              child: TextField(
-                style: TextStyle(fontSize: 20),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  labelStyle: TextStyle(fontSize: 20),
-                  hintStyle: TextStyle(fontSize: 20),
-                  hintText: 'Search',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(20),
+                const EdgeInsets.only(top: 32, left: 20, right: 20, bottom: 32),
+            child: TextField(
+              style: TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                labelStyle: TextStyle(fontSize: 20),
+                hintStyle: TextStyle(fontSize: 20),
+                hintText: 'Search',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 ),
-                keyboardType: TextInputType.name,
-                onChanged: manager.search,
+                contentPadding: EdgeInsets.all(20),
               ),
+              keyboardType: TextInputType.name,
+              onChanged: manager.search,
             ),
           ),
           Expanded(
@@ -60,23 +56,27 @@ class _ChooseFavoriteCurrencyScreenState
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final item = list[index];
-                    return Card(
-                      child: ListTile(
-                        leading: SizedBox(
-                          width: 60,
-                          child: Text(
-                            '${item.flag}',
-                            style: TextStyle(fontSize: 30),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Card(
+                        child: ListTile(
+                          leading: SizedBox(
+                            width: 40,
+                            child: Text(
+                              '${item.flag}',
+                              style: TextStyle(fontSize: 30),
+                            ),
                           ),
+                          title: Text('${item.isoCode}'),
+                          subtitle: Text('${item.longName}'),
+                          trailing: (item.isFavorite)
+                              ? Icon(Icons.favorite,
+                                  color: Theme.of(context).colorScheme.primary)
+                              : Icon(Icons.favorite_border),
+                          onTap: () {
+                            manager.toggleFavoriteStatus(item.isoCode);
+                          },
                         ),
-                        title: Text('${item.isoCode}'),
-                        subtitle: Text('${item.longName}'),
-                        trailing: (item.isFavorite)
-                            ? Icon(Icons.favorite, color: Colors.red)
-                            : Icon(Icons.favorite_border),
-                        onTap: () {
-                          manager.toggleFavoriteStatus(item.isoCode);
-                        },
                       ),
                     );
                   },

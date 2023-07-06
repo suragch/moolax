@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Moola X',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        useMaterial3: true,
+        colorSchemeSeed: Colors.green,
       ),
       home: CalculateCurrencyScreen(),
     );

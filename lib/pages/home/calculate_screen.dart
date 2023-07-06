@@ -82,7 +82,7 @@ class Title extends StatelessWidget {
       padding: const EdgeInsets.only(left: 32, top: 32, right: 32, bottom: 5),
       child: Text(
         '${manager.baseCurrency.longName}',
-        style: TextStyle(fontSize: 25),
+        //style: TextStyle(fontSize: 25),
       ),
     );
   }
@@ -103,12 +103,8 @@ class InputBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32),
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
         child: TextField(
           style: TextStyle(fontSize: 20),
           controller: controller,
@@ -118,7 +114,7 @@ class InputBox extends StatelessWidget {
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 16.0),
               child: SizedBox(
-                width: 60,
+                width: 50,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -128,10 +124,11 @@ class InputBox extends StatelessWidget {
                 ),
               ),
             ),
-            labelStyle: TextStyle(fontSize: 20),
-            hintStyle: TextStyle(fontSize: 20),
+            hintStyle: TextStyle(fontSize: 14),
             hintText: 'Amount to exchange',
-            border: InputBorder.none,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
             contentPadding: EdgeInsets.all(20),
           ),
           keyboardType: TextInputType.number,
@@ -160,22 +157,25 @@ class FavoritesList extends StatelessWidget {
       child: ListView.builder(
         itemCount: manager.quoteCurrencies.length,
         itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              leading: SizedBox(
-                width: 60,
-                child: Text(
-                  '${manager.quoteCurrencies[index].flag}',
-                  style: TextStyle(fontSize: 30),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Card(
+              child: ListTile(
+                leading: SizedBox(
+                  width: 40,
+                  child: Text(
+                    '${manager.quoteCurrencies[index].flag}',
+                    style: TextStyle(fontSize: 30),
+                  ),
                 ),
+                title: Text(manager.quoteCurrencies[index].amount),
+                subtitle: Text(manager.quoteCurrencies[index].longName),
+                onTap: () {
+                  manager.setNewBaseCurrency(index);
+                  controller.clear();
+                  focusNode.requestFocus();
+                },
               ),
-              title: Text(manager.quoteCurrencies[index].amount),
-              subtitle: Text(manager.quoteCurrencies[index].longName),
-              onTap: () {
-                manager.setNewBaseCurrency(index);
-                controller.clear();
-                focusNode.requestFocus();
-              },
             ),
           );
         },
