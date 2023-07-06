@@ -15,6 +15,7 @@ class CalculateCurrencyScreen extends StatefulWidget {
 class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
   final manager = getIt<CalculateScreenManager>();
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -49,8 +50,16 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Title(manager: manager),
-              InputBox(manager: manager, controller: _controller),
-              FavoritesList(manager: manager, controller: _controller),
+              InputBox(
+                manager: manager,
+                controller: _controller,
+                focusNode: _focusNode,
+              ),
+              FavoritesList(
+                manager: manager,
+                controller: _controller,
+                focusNode: _focusNode,
+              ),
             ],
           );
         },
@@ -80,14 +89,16 @@ class Title extends StatelessWidget {
 }
 
 class InputBox extends StatelessWidget {
-  const InputBox({
+  InputBox({
     super.key,
-    required TextEditingController controller,
+    required this.controller,
     required this.manager,
-  }) : _controller = controller;
+    required this.focusNode,
+  });
 
-  final TextEditingController _controller;
+  final TextEditingController controller;
   final CalculateScreenManager manager;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +111,9 @@ class InputBox extends StatelessWidget {
         ),
         child: TextField(
           style: TextStyle(fontSize: 20),
-          controller: _controller,
+          controller: controller,
+          autofocus: true,
+          focusNode: focusNode,
           decoration: InputDecoration(
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 16.0),
@@ -133,11 +146,13 @@ class FavoritesList extends StatelessWidget {
   const FavoritesList({
     super.key,
     required this.manager,
-    required TextEditingController controller,
-  }) : _controller = controller;
+    required this.controller,
+    required this.focusNode,
+  });
 
   final CalculateScreenManager manager;
-  final TextEditingController _controller;
+  final TextEditingController controller;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +173,8 @@ class FavoritesList extends StatelessWidget {
               subtitle: Text(manager.quoteCurrencies[index].longName),
               onTap: () {
                 manager.setNewBaseCurrency(index);
-                _controller.clear();
+                controller.clear();
+                focusNode.requestFocus();
               },
             ),
           );
