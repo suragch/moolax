@@ -2,6 +2,7 @@
 /// See LICENSE for details.
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/currency_service.dart';
@@ -19,7 +20,7 @@ class CalculateScreenManager extends ChangeNotifier {
 
   static final defaultBaseCurrency = CurrencyPresentation(
     flag: '',
-    alphabeticCode: '',
+    isoCode: '',
     longName: '',
     amount: '',
   );
@@ -27,7 +28,7 @@ class CalculateScreenManager extends ChangeNotifier {
   void loadData() async {
     await _loadCurrencies();
     _rates = await _currencyService.getAllExchangeRates(
-      base: _baseCurrency.alphabeticCode,
+      base: _baseCurrency.isoCode,
     );
     notifyListeners();
   }
@@ -45,7 +46,7 @@ class CalculateScreenManager extends ChangeNotifier {
     String code = currencies[0].isoCode;
     return CurrencyPresentation(
       flag: IsoData.flagOf(code),
-      alphabeticCode: code,
+      isoCode: code,
       longName: IsoData.longNameOf(code),
       amount: '',
     );
@@ -57,7 +58,7 @@ class CalculateScreenManager extends ChangeNotifier {
       String code = currencies[i].isoCode;
       quotes.add(CurrencyPresentation(
         flag: IsoData.flagOf(code),
-        alphabeticCode: code,
+        isoCode: code,
         longName: IsoData.longNameOf(code),
         amount: currencies[i].amount.toStringAsFixed(2),
       ));
@@ -77,22 +78,22 @@ class CalculateScreenManager extends ChangeNotifier {
     double amount;
     try {
       amount = double.parse(baseAmount);
-    } catch (e) {
-      _updateCurrenciesFor(0);
-      notifyListeners();
-      return null;
+    } on FormatException {
+      amount = 0;
     }
-
     _updateCurrenciesFor(amount);
-
     notifyListeners();
   }
 
   void _updateCurrenciesFor(double baseAmount) {
-    for (CurrencyPresentation c in _quoteCurrencies) {
+    final formatter = NumberFormat.decimalPatternDigits(
+      locale: 'en_us',
+      decimalDigits: 2,
+    );
+    for (final c in _quoteCurrencies) {
       for (Rate r in _rates) {
-        if (c.alphabeticCode == r.quoteCurrency) {
-          c.amount = (baseAmount * r.exchangeRate).toStringAsFixed(2);
+        if (c.isoCode == r.quoteCurrency) {
+          c.amount = formatter.format(baseAmount * r.exchangeRate);
           break;
         }
       }
@@ -116,9 +117,9 @@ class CalculateScreenManager extends ChangeNotifier {
 
   List<Currency> _convertPresentationToCurrency() {
     List<Currency> currencies = [];
-    currencies.add(Currency(_baseCurrency.alphabeticCode));
+    currencies.add(Currency(_baseCurrency.isoCode));
     for (CurrencyPresentation currency in _quoteCurrencies) {
-      currencies.add(Currency(currency.alphabeticCode));
+      currencies.add(Currency(currency.isoCode));
     }
     return currencies;
   }
@@ -128,13 +129,13 @@ class CalculateScreenManager extends ChangeNotifier {
 // preformatted string.
 class CurrencyPresentation {
   final String flag;
-  final String alphabeticCode;
+  final String isoCode;
   final String longName;
   String amount;
 
   CurrencyPresentation({
     required this.flag,
-    required this.alphabeticCode,
+    required this.isoCode,
     required this.longName,
     required this.amount,
   });

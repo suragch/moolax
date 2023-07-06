@@ -122,9 +122,7 @@ class InputBox extends StatelessWidget {
             contentPadding: EdgeInsets.all(20),
           ),
           keyboardType: TextInputType.number,
-          onChanged: (text) {
-            manager.calculateExchange(text);
-          },
+          onChanged: manager.calculateExchange,
         ),
       ),
     );
@@ -156,8 +154,8 @@ class FavoritesList extends StatelessWidget {
                   style: TextStyle(fontSize: 30),
                 ),
               ),
-              title: Text(manager.quoteCurrencies[index].longName),
-              subtitle: Text(manager.quoteCurrencies[index].amount),
+              title: Text(manager.quoteCurrencies[index].amount),
+              subtitle: Text(manager.quoteCurrencies[index].longName),
               onTap: () {
                 manager.setNewBaseCurrency(index);
                 _controller.clear();
