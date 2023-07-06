@@ -27,34 +27,64 @@ class _ChooseFavoriteCurrencyScreenState
       appBar: AppBar(
         title: Text('Choose Currencies'),
       ),
-      body: ListenableBuilder(
-        listenable: manager,
-        builder: (context, child) {
-          return ListView.builder(
-            itemCount: manager.choices.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 60,
-                    child: Text(
-                      '${manager.choices[index].flag}',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  ),
-                  title: Text('${manager.choices[index].alphabeticCode}'),
-                  subtitle: Text('${manager.choices[index].longName}'),
-                  trailing: (manager.choices[index].isFavorite)
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border),
-                  onTap: () {
-                    manager.toggleFavoriteStatus(index);
-                  },
+      body: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 32, left: 32, right: 32, bottom: 32),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: TextField(
+                style: TextStyle(fontSize: 20),
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  labelStyle: TextStyle(fontSize: 20),
+                  hintStyle: TextStyle(fontSize: 20),
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(20),
                 ),
-              );
-            },
-          );
-        },
+                keyboardType: TextInputType.name,
+                onChanged: manager.search,
+              ),
+            ),
+          ),
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: manager.favoritesNotifier,
+              builder: (context, list, child) {
+                return ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    final item = list[index];
+                    return Card(
+                      child: ListTile(
+                        leading: SizedBox(
+                          width: 60,
+                          child: Text(
+                            '${item.flag}',
+                            style: TextStyle(fontSize: 30),
+                          ),
+                        ),
+                        title: Text('${item.isoCode}'),
+                        subtitle: Text('${item.longName}'),
+                        trailing: (item.isFavorite)
+                            ? Icon(Icons.favorite, color: Colors.red)
+                            : Icon(Icons.favorite_border),
+                        onTap: () {
+                          manager.toggleFavoriteStatus(item.isoCode);
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

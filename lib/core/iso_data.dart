@@ -190,7 +190,7 @@ class IsoData {
     'VND': {'name': 'Vietnamese dong', 'flag': '🇻🇳'},
     'VUV': {'name': 'Vanuatu vatu', 'flag': '🇻🇺'},
     'WST': {'name': 'Samoan tala', 'flag': '🇼🇸'},
-    'XAF': {'name': 'CFA Franc BEAC', 'flag': ''},
+    'XAF': {'name': 'Central African CFA franc', 'flag': '🌍'},
     'XAG': {'name': 'Silver (one troy ounce)', 'flag': '🥈'},
     'XAU': {'name': 'Gold (one troy ounce)', 'flag': '🥇'},
     'XBA': {
@@ -209,14 +209,11 @@ class IsoData {
       'name': 'European Unit of Account 17 (E.U.A.-17) (bond market unit)',
       'flag': ''
     },
-    'XCD': {'name': 'East Caribbean Dollar', 'flag': ''},
-    'XDR': {
-      'name': 'Special drawing rights (International Monetary Fund)',
-      'flag': ''
-    },
-    'XOF': {'name': 'CFA franc BCEAO', 'flag': ''},
+    'XCD': {'name': 'East Caribbean Dollar', 'flag': r'🏝️'},
+    'XDR': {'name': 'Special drawing rights (IMF)', 'flag': '🇺🇳'},
+    'XOF': {'name': 'West African CFA franc', 'flag': '🌍'},
     'XPD': {'name': 'Palladium (one troy ounce)', 'flag': ''},
-    'XPF': {'name': 'CFP franc', 'flag': ''},
+    'XPF': {'name': 'CFP franc', 'flag': '🏝️'},
     'XPT': {'name': 'Platinum (one troy ounce)', 'flag': ''},
     'XSU': {
       'name': 'Unified System for Regional Compensation (SUCRE)',

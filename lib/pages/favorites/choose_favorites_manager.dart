@@ -8,22 +8,18 @@ import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
 import 'package:moolax/services/service_locator.dart';
 
-// This class manages choosing the favorite currencies to show on the main screen.
-// It also puts the choices in a form that is easy to display on a view. It
-// knows nothing about any particular view, though.
-class ChooseFavoritesManager extends ChangeNotifier {
-  final CurrencyService _currencyService = getIt<CurrencyService>();
+class ChooseFavoritesManager {
+  final _currencyService = getIt<CurrencyService>();
+  final favoritesNotifier = FavoritesNotifier();
 
-  List<FavoritePresentation> _choices = [];
+  //List<FavoritePresentation> _fullList = [];
   List<Currency> _favorites = [];
-
-  List<FavoritePresentation> get choices => _choices;
 
   void loadData() async {
     final rates = await _currencyService.getAllExchangeRates();
     _favorites = await _currencyService.getFavoriteCurrencies();
-    _choices = _prepareChoicePresentation(rates);
-    notifyListeners();
+    final initialList = _prepareChoicePresentation(rates);
+    favoritesNotifier.init(initialList);
   }
 
   List<FavoritePresentation> _prepareChoicePresentation(List<Rate> rates) {
@@ -33,7 +29,7 @@ class ChooseFavoritesManager extends ChangeNotifier {
       bool isFavorite = _getFavoriteStatus(code);
       list.add(FavoritePresentation(
         flag: IsoData.flagOf(code),
-        alphabeticCode: code,
+        isoCode: code,
         longName: IsoData.longNameOf(code),
         isFavorite: isFavorite,
       ));
@@ -48,21 +44,15 @@ class ChooseFavoritesManager extends ChangeNotifier {
     return false;
   }
 
-  void toggleFavoriteStatus(int choiceIndex) {
-    final isFavorite = !_choices[choiceIndex].isFavorite;
-    final code = _choices[choiceIndex].alphabeticCode;
-
-    // update display
-    _choices[choiceIndex].isFavorite = isFavorite;
+  void toggleFavoriteStatus(String isoCode) {
+    final isFavorite = favoritesNotifier.toggleFavorite(isoCode);
 
     // update favorite list
     if (isFavorite) {
-      _addToFavorites(code);
+      _addToFavorites(isoCode);
     } else {
-      _removeFromFavorites(code);
+      _removeFromFavorites(isoCode);
     }
-
-    notifyListeners();
   }
 
   void _addToFavorites(String alphabeticCode) {
@@ -79,18 +69,60 @@ class ChooseFavoritesManager extends ChangeNotifier {
     }
     _currencyService.saveFavoriteCurrencies(_favorites);
   }
+
+  void search(String text) {
+    favoritesNotifier.filter(text);
+  }
 }
 
 class FavoritePresentation {
   final String flag;
-  final String alphabeticCode;
+  final String isoCode;
   final String longName;
   bool isFavorite;
 
   FavoritePresentation({
     required this.flag,
-    required this.alphabeticCode,
+    required this.isoCode,
     required this.longName,
     required this.isFavorite,
   });
+}
+
+class FavoritesNotifier extends ValueNotifier<List<FavoritePresentation>> {
+  FavoritesNotifier() : super([]);
+
+  late List<FavoritePresentation> _fullList;
+
+  void init(List<FavoritePresentation> initialList) {
+    _fullList = initialList;
+    value = initialList;
+  }
+
+  void setFavorite(bool isFavorite) {}
+
+  void refresh() {
+    notifyListeners(); // here
+  }
+
+  bool toggleFavorite(String isoCode) {
+    final choiceIndex = _fullList.indexWhere(
+      (element) => element.isoCode == isoCode,
+    );
+    final isFavorite = !_fullList[choiceIndex].isFavorite;
+    _fullList[choiceIndex].isFavorite = isFavorite;
+    notifyListeners();
+    return isFavorite;
+  }
+
+  void filter(String search) {
+    final cleaned = search.trim().toUpperCase();
+    value = _fullList
+        .where(
+          (element) =>
+              element.isoCode.contains(cleaned) ||
+              element.longName.toUpperCase().contains(cleaned),
+        )
+        .toList();
+  }
 }
