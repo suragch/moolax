@@ -130,6 +130,13 @@ class InputBox extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
             ),
             contentPadding: EdgeInsets.all(20),
+            suffix: IconButton(
+              icon: Icon(Icons.clear),
+              onPressed: () {
+                controller.clear();
+                manager.calculateExchange('');
+              },
+            ),
           ),
           keyboardType: TextInputType.number,
           onChanged: manager.calculateExchange,

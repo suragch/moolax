@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:http/http.dart' as http;
+import 'package:moolax/secrets.dart';
 
 abstract class WebApi {
   Future<List<Rate>> fetchExchangeRates();
@@ -14,7 +15,10 @@ abstract class WebApi {
 class WebApiImpl implements WebApi {
   final _host = 'moolaxworker.studymongolian.workers.dev';
   final _path = 'api';
-  final Map<String, String> _headers = {'Accept': 'application/json'};
+  final Map<String, String> _headers = {
+    'Accept': 'application/json',
+    'Authorization': 'Bearer ${AppSecrets.webApiKey}',
+  };
 
   List<Rate>? _rateCache;
 
