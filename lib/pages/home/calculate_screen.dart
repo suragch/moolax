@@ -31,15 +31,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.favorite),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChooseFavoriteCurrencyScreen(),
-                ),
-              );
-              manager.refreshFavorites();
-            },
+            onPressed: () => _goToFavorites(context, manager),
           )
         ],
       ),
@@ -66,6 +58,19 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
       ),
     );
   }
+}
+
+Future<void> _goToFavorites(
+  BuildContext context,
+  CalculateScreenManager manager,
+) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChooseFavoriteCurrencyScreen(),
+    ),
+  );
+  manager.refreshFavorites();
 }
 
 class Title extends StatelessWidget {
@@ -160,6 +165,14 @@ class FavoritesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (manager.quoteCurrencies.isEmpty) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: () => _goToFavorites(context, manager),
+          child: Text('Choose exchange currency'),
+        ),
+      );
+    }
     return Expanded(
       child: ListView.builder(
         itemCount: manager.quoteCurrencies.length,

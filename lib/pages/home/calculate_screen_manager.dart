@@ -27,6 +27,7 @@ class CalculateScreenManager extends ChangeNotifier {
 
   void loadData() async {
     await _loadCurrencies();
+    notifyListeners();
     _rates = await _currencyService.getAllExchangeRates(
       base: _baseCurrency.isoCode,
     );
