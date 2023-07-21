@@ -6,6 +6,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  connectivity_plus: ^4.0.1
   flutter:
     sdk: flutter
   get_it: ^7.6.0

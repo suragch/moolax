@@ -3,13 +3,14 @@
 
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:http/http.dart' as http;
 import 'package:moolax/secrets.dart';
 
 abstract class WebApi {
-  Future<List<Rate>> fetchExchangeRates();
+  Future<List<Rate>?> fetchExchangeRates();
 }
 
 class WebApiImpl implements WebApi {
@@ -22,17 +23,41 @@ class WebApiImpl implements WebApi {
 
   List<Rate>? _rateCache;
 
-  Future<List<Rate>> fetchExchangeRates() async {
-    if (_rateCache == null) {
-      print('getting rates from the web');
-      final uri = Uri.https(_host, _path);
-      final results = await http.get(uri, headers: _headers);
-      final jsonObject = json.decode(results.body);
-      _rateCache = _createRateListFromRawMap(jsonObject);
-    } else {
+  /// returns null for any internet problems
+  Future<List<Rate>?> fetchExchangeRates() async {
+    // use in-memory cache if available
+    final rates = _rateCache;
+    if (rates != null) {
       print('getting rates from cache');
+      return rates;
     }
-    return _rateCache ?? [];
+
+    // check the network connection
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      print('No Internet connection');
+      return null;
+    }
+
+    // look the data up on the server
+    print('getting rates from the web');
+    final uri = Uri.https(_host, _path);
+    final response = await http.get(uri, headers: _headers);
+    if (response.statusCode != 200) {
+      print('Unexpected status code: ${response.statusCode}');
+      return null;
+    }
+
+    // extract the data
+    try {
+      final jsonObject = json.decode(response.body);
+      _rateCache = _createRateListFromRawMap(jsonObject);
+    } on FormatException {
+      print('Server data malformatted');
+      return null;
+    }
+
+    return _rateCache;
   }
 
   List<Rate> _createRateListFromRawMap(dynamic jsonObject) {

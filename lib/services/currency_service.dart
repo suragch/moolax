@@ -11,6 +11,7 @@ abstract class CurrencyService {
   Future<List<Rate>> getAllExchangeRates({String base});
   Future<List<Currency>> getFavoriteCurrencies();
   Future<void> saveFavoriteCurrencies(List<Currency> data);
+  void Function(Duration)? staleCacheListener;
 }
 
 class CurrencyServiceImpl implements CurrencyService {
@@ -19,13 +20,50 @@ class CurrencyServiceImpl implements CurrencyService {
 
   static final defaultFavorites = [Currency('EUR'), Currency('USD')];
 
+  List<Rate>? _rateCache;
+
+  @override
+  void Function(Duration p1)? staleCacheListener;
+
   @override
   Future<List<Rate>> getAllExchangeRates({String? base}) async {
-    final webData = await _webApi.fetchExchangeRates();
-    if (base != null) {
-      return _convertBaseCurrency(base, webData);
+    // use the in-memory cache first
+    var rates = _rateCache;
+    if (rates != null) {
+      return _convertBaseCurrency(base, rates);
     }
-    return webData;
+
+    // look it up in storage next
+    final lapsedTime = await _storageService.timeSinceLastRatesCache();
+    if (lapsedTime.inHours <= 24) {
+      rates = await _storageService.getExchangeRateData();
+      if (rates != null) {
+        _rateCache = rates;
+        return _convertBaseCurrency(base, rates);
+      }
+    }
+
+    // look it up on the web
+    rates = await _webApi.fetchExchangeRates();
+    if (rates != null) {
+      _storageService.cacheExchangeRateData(rates);
+      _rateCache = rates;
+      return _convertBaseCurrency(base, rates);
+    }
+
+    // return stale cache if necessary
+    rates = await _storageService.getExchangeRateData();
+    if (rates != null) {
+      if (lapsedTime.inDays > 30) {
+        // notify the user that the exchange rate data is old
+        staleCacheListener?.call(lapsedTime);
+      }
+      _rateCache = rates;
+      return _convertBaseCurrency(base, rates);
+    }
+
+    // return an empty list as a last resort
+    return [];
   }
 
   @override
@@ -37,7 +75,8 @@ class CurrencyServiceImpl implements CurrencyService {
     return favorites;
   }
 
-  List<Rate> _convertBaseCurrency(String base, List<Rate> remoteData) {
+  List<Rate> _convertBaseCurrency(String? base, List<Rate> remoteData) {
+    if (base == null || remoteData.isEmpty) return remoteData;
     if (remoteData[0].baseCurrency == base) {
       return remoteData;
     }

@@ -10,10 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class StorageService {
   Future<void> cacheExchangeRateData(List<Rate> data);
-  Future<List<Rate>> getExchangeRateData();
+  Future<List<Rate>?> getExchangeRateData();
   Future<List<Currency>> getFavoriteCurrencies();
   Future<void> saveFavoriteCurrencies(List<Currency> data);
-  Future<bool> isExpiredCache();
+  Future<Duration> timeSinceLastRatesCache();
 }
 
 class StorageServiceImpl implements StorageService {
@@ -22,13 +22,13 @@ class StorageServiceImpl implements StorageService {
   static const sharedPrefLastCacheTimeKey = 'cache_time_key';
 
   @override
-  Future<List<Rate>> getExchangeRateData() async {
-    String data = await _getStringFromPreferences(sharedPrefExchangeRateKey);
-    List<Rate> rates = _deserializeRates(data);
-    return Future<List<Rate>>.value(rates);
+  Future<List<Rate>?> getExchangeRateData() async {
+    final data = await _getStringFromPreferences(sharedPrefExchangeRateKey);
+    if (data == null) return null;
+    return _deserializeRates(data);
   }
 
-  List<Rate> _deserializeRates(String json) {
+  List<Rate>? _deserializeRates(String json) {
     final rates = <Rate>[];
     try {
       final rateList = jsonDecode(json);
@@ -38,21 +38,23 @@ class StorageServiceImpl implements StorageService {
       }
     } on FormatException {
       debugPrint('JSON format exception');
+      return null;
     }
     return rates;
   }
 
   @override
   Future<void> cacheExchangeRateData(List<Rate> data) async {
-    String jsonString = jsonEncode(data);
+    final list = data.map((rate) => rate.toJson()).toList();
+    String jsonString = jsonEncode(list);
     _saveToPreferences(sharedPrefExchangeRateKey, jsonString);
     _resetCacheTimeToNow();
   }
 
   @override
   Future<List<Currency>> getFavoriteCurrencies() async {
-    String data = await _getStringFromPreferences(sharedPrefCurrencyKey);
-    if (data == '') {
+    final data = await _getStringFromPreferences(sharedPrefCurrencyKey);
+    if (data == null) {
       return [];
     }
     print('getFavoriteCurrencies: $data');
@@ -87,11 +89,12 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<bool> isExpiredCache() async {
+  Future<Duration> timeSinceLastRatesCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    int timestamp = prefs.getInt(sharedPrefLastCacheTimeKey) ?? 0;
+    DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final now = DateTime.now();
-    DateTime lastUpdate = await _getLastRatesCacheTime();
-    Duration difference = now.difference(lastUpdate);
-    return difference.inDays > 1;
+    return now.difference(lastUpdate);
   }
 
   Future<void> _saveToPreferences(String key, String value) async {
@@ -99,20 +102,14 @@ class StorageServiceImpl implements StorageService {
     prefs.setString(key, value);
   }
 
-  Future<String> _getStringFromPreferences(String key) async {
+  Future<String?> _getStringFromPreferences(String key) async {
     final prefs = await SharedPreferences.getInstance();
-    return Future<String>.value(prefs.getString(key) ?? '');
+    return Future<String>.value(prefs.getString(key));
   }
 
   Future<void> _resetCacheTimeToNow() async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt(sharedPrefLastCacheTimeKey, timestamp);
-  }
-
-  Future<DateTime> _getLastRatesCacheTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    int timestamp = prefs.getInt(sharedPrefLastCacheTimeKey) ?? 0;
-    return DateTime.fromMillisecondsSinceEpoch(timestamp);
   }
 }

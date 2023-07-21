@@ -181,24 +181,34 @@ class FavoritesList extends StatelessWidget {
       child: ListView.builder(
         itemCount: manager.quoteCurrencies.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Card(
-              child: ListTile(
-                leading: SizedBox(
-                  width: 40,
-                  child: Text(
-                    '${manager.quoteCurrencies[index].flag}',
-                    style: TextStyle(fontSize: 30),
+          final currency = manager.quoteCurrencies[index];
+          return Dismissible(
+            key: Key(currency.isoCode),
+            onDismissed: (direction) {
+              manager.unfavorite(currency.isoCode);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Card(
+                child: ListTile(
+                  leading: SizedBox(
+                    width: 40,
+                    child: Text(
+                      '${currency.flag}',
+                      style: TextStyle(fontSize: 30),
+                    ),
                   ),
+                  title: Text(currency.amount),
+                  subtitle: Text(currency.longName),
+                  onTap: () {
+                    manager.setNewBaseCurrency(index);
+                    controller.clear();
+                    focusNode.requestFocus();
+                  },
+                  onLongPress: () {
+                    // delete
+                  },
                 ),
-                title: Text(manager.quoteCurrencies[index].amount),
-                subtitle: Text(manager.quoteCurrencies[index].longName),
-                onTap: () {
-                  manager.setNewBaseCurrency(index);
-                  controller.clear();
-                  focusNode.requestFocus();
-                },
               ),
             ),
           );

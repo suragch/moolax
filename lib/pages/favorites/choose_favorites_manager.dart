@@ -99,8 +99,6 @@ class FavoritesNotifier extends ValueNotifier<List<FavoritePresentation>> {
     value = initialList;
   }
 
-  void setFavorite(bool isFavorite) {}
-
   void refresh() {
     notifyListeners(); // here
   }

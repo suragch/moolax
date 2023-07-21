@@ -35,4 +35,12 @@ class Rate {
       throw FormatException('Invalid JSON');
     }
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'baseCurrency': baseCurrency,
+      'quoteCurrency': quoteCurrency,
+      'exchangeRate': exchangeRate,
+    };
+  }
 }

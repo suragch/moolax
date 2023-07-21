@@ -124,6 +124,12 @@ class CalculateScreenManager extends ChangeNotifier {
     }
     return currencies;
   }
+
+  Future<void> unfavorite(String isoCode) async {
+    final favorites = await _currencyService.getFavoriteCurrencies();
+    favorites.removeWhere((currency) => currency.isoCode == isoCode);
+    _currencyService.saveFavoriteCurrencies(favorites);
+  }
 }
 
 // A model class specifically for displaying data in a view. Everything is a
@@ -140,4 +146,9 @@ class CurrencyPresentation {
     required this.longName,
     required this.amount,
   });
+
+  @override
+  String toString() {
+    return '($isoCode, $amount)';
+  }
 }
