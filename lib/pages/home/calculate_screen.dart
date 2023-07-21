@@ -31,7 +31,10 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.favorite),
-            onPressed: () => _goToFavorites(context, manager),
+            onPressed: () async {
+              await _goToFavorites(context, manager);
+              manager.refreshFavorites(_controller.text);
+            },
           )
         ],
       ),
@@ -70,7 +73,6 @@ Future<void> _goToFavorites(
       builder: (context) => ChooseFavoriteCurrencyScreen(),
     ),
   );
-  manager.refreshFavorites();
 }
 
 class Title extends StatelessWidget {
@@ -87,7 +89,6 @@ class Title extends StatelessWidget {
       padding: const EdgeInsets.only(left: 32, top: 32, right: 32, bottom: 5),
       child: Text(
         '${manager.baseCurrency.longName}',
-        //style: TextStyle(fontSize: 25),
       ),
     );
   }
@@ -168,7 +169,10 @@ class FavoritesList extends StatelessWidget {
     if (manager.quoteCurrencies.isEmpty) {
       return Center(
         child: ElevatedButton(
-          onPressed: () => _goToFavorites(context, manager),
+          onPressed: () async {
+            await _goToFavorites(context, manager);
+            manager.refreshFavorites(controller.text);
+          },
           child: Text('Choose exchange currency'),
         ),
       );

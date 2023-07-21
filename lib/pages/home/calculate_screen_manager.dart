@@ -101,9 +101,9 @@ class CalculateScreenManager extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshFavorites() async {
+  Future<void> refreshFavorites(String amount) async {
     await _loadCurrencies();
-    notifyListeners();
+    calculateExchange(amount);
   }
 
   Future<void> setNewBaseCurrency(int quoteCurrencyIndex) async {

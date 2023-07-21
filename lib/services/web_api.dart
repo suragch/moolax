@@ -13,7 +13,7 @@ abstract class WebApi {
 }
 
 class WebApiImpl implements WebApi {
-  final _host = 'moolaxworker.studymongolian.workers.dev';
+  final _host = 'moolax.suragch.dev';
   final _path = 'api';
   final Map<String, String> _headers = {
     'Accept': 'application/json',
