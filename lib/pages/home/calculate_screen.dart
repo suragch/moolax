@@ -8,7 +8,7 @@ import 'package:moolax/services/service_locator.dart';
 
 class CalculateCurrencyScreen extends StatefulWidget {
   @override
-  _CalculateCurrencyScreenState createState() =>
+  State<CalculateCurrencyScreen> createState() =>
       _CalculateCurrencyScreenState();
 }
 
@@ -88,7 +88,7 @@ class Title extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 32, top: 32, right: 32, bottom: 5),
       child: Text(
-        '${manager.baseCurrency.longName}',
+        manager.baseCurrency.longName,
       ),
     );
   }
@@ -124,7 +124,7 @@ class InputBox extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '${manager.baseCurrency.flag}',
+                    manager.baseCurrency.flag,
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
@@ -183,7 +183,7 @@ class FavoritesList extends StatelessWidget {
         itemBuilder: (context, index) {
           final currency = manager.quoteCurrencies[index];
           return Dismissible(
-            key: Key(currency.isoCode),
+            key: UniqueKey(),
             onDismissed: (direction) {
               manager.unfavorite(currency.isoCode);
             },
@@ -194,7 +194,7 @@ class FavoritesList extends StatelessWidget {
                   leading: SizedBox(
                     width: 40,
                     child: Text(
-                      '${currency.flag}',
+                      currency.flag,
                       style: TextStyle(fontSize: 30),
                     ),
                   ),

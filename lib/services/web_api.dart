@@ -4,13 +4,12 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:http/http.dart' as http;
 import 'package:moolax/secrets.dart';
 
 abstract class WebApi {
-  Future<List<Rate>?> fetchExchangeRates();
+  Future<Map<String, Rate>?> fetchExchangeRates();
 }
 
 class WebApiImpl implements WebApi {
@@ -21,10 +20,11 @@ class WebApiImpl implements WebApi {
     'Authorization': 'Bearer ${AppSecrets.webApiKey}',
   };
 
-  List<Rate>? _rateCache;
+  Map<String, Rate>? _rateCache;
 
   /// returns null for any internet problems
-  Future<List<Rate>?> fetchExchangeRates() async {
+  @override
+  Future<Map<String, Rate>?> fetchExchangeRates() async {
     // use in-memory cache if available
     final rates = _rateCache;
     if (rates != null) {
@@ -45,6 +45,7 @@ class WebApiImpl implements WebApi {
     final response = await http.get(uri, headers: _headers);
     if (response.statusCode != 200) {
       print('Unexpected status code: ${response.statusCode}');
+      print(response.body);
       return null;
     }
 
@@ -60,29 +61,18 @@ class WebApiImpl implements WebApi {
     return _rateCache;
   }
 
-  List<Rate> _createRateListFromRawMap(dynamic jsonObject) {
-    final rates = jsonObject['rates'];
-    List<Rate> list = [];
-
-    if (rates is! Map<String, dynamic>) return list;
-
+  Map<String, Rate> _createRateListFromRawMap(dynamic jsonObject) {
+    final rates = jsonObject['rates'] as Map<String, dynamic>;
     final base = jsonObject['base'] as String;
-    for (final entry in rates.entries) {
-      final quote = entry.key;
-      try {
-        final rate = (entry.value as num).toDouble();
-        list.add(
-          Rate(
-            baseCurrency: base,
-            quoteCurrency: quote,
-            exchangeRate: rate,
-          ),
-        );
-      } on Exception catch (e) {
-        debugPrint(e.toString());
-      }
-    }
-
-    return list;
+    return rates.map(
+      (quote, rate) => MapEntry(
+        quote,
+        Rate(
+          baseCurrency: base,
+          quoteCurrency: quote,
+          exchangeRate: (rate as num).toDouble(),
+        ),
+      ),
+    );
   }
 }

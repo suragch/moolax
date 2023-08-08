@@ -15,8 +15,9 @@ class Rate {
     required this.quoteCurrency,
     required this.exchangeRate,
   }) {
-    if (baseCurrency.length != 3 || quoteCurrency.length != 3)
+    if (baseCurrency.length != 3 || quoteCurrency.length != 3) {
       throw ArgumentError('The ISO code must have a length of 3.');
+    }
   }
 
   factory Rate.fromJson(Map<String, dynamic> json) {

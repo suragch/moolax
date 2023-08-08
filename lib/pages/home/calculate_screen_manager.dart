@@ -16,7 +16,7 @@ class CalculateScreenManager extends ChangeNotifier {
 
   CurrencyPresentation _baseCurrency = defaultBaseCurrency;
   List<CurrencyPresentation> _quoteCurrencies = [];
-  List<Rate> _rates = [];
+  Map<String, Rate> _rates = {};
 
   static final defaultBaseCurrency = CurrencyPresentation(
     flag: '',
@@ -28,6 +28,7 @@ class CalculateScreenManager extends ChangeNotifier {
   void loadData() async {
     await _loadCurrencies();
     notifyListeners();
+    print('getting rates');
     _rates = await _currencyService.getAllExchangeRates(
       base: _baseCurrency.isoCode,
     );
@@ -41,7 +42,7 @@ class CalculateScreenManager extends ChangeNotifier {
   }
 
   CurrencyPresentation _loadBaseCurrency(List<Currency> currencies) {
-    if (currencies.length == 0) {
+    if (currencies.isEmpty) {
       return defaultBaseCurrency;
     }
     String code = currencies[0].isoCode;
@@ -61,7 +62,7 @@ class CalculateScreenManager extends ChangeNotifier {
         flag: IsoData.flagOf(code),
         isoCode: code,
         longName: IsoData.longNameOf(code),
-        amount: currencies[i].amount.toStringAsFixed(2),
+        amount: 0.toStringAsFixed(2),
       ));
     }
     return quotes;
@@ -82,6 +83,7 @@ class CalculateScreenManager extends ChangeNotifier {
     } on FormatException {
       amount = 0;
     }
+    print('amount: $amount');
     _updateCurrenciesFor(amount);
     notifyListeners();
   }
@@ -91,13 +93,9 @@ class CalculateScreenManager extends ChangeNotifier {
       locale: 'en_us',
       decimalDigits: 2,
     );
-    for (final c in _quoteCurrencies) {
-      for (Rate r in _rates) {
-        if (c.isoCode == r.quoteCurrency) {
-          c.amount = formatter.format(baseAmount * r.exchangeRate);
-          break;
-        }
-      }
+    for (final currency in _quoteCurrencies) {
+      final rate = _rates[currency.isoCode]!.exchangeRate;
+      currency.amount = formatter.format(baseAmount * rate);
     }
   }
 

@@ -9,11 +9,12 @@ import 'package:moolax/core/rate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class StorageService {
-  Future<void> cacheExchangeRateData(List<Rate> data);
-  Future<List<Rate>?> getExchangeRateData();
-  Future<List<Currency>> getFavoriteCurrencies();
+  Future<void> init();
+  Future<void> cacheExchangeRateData(Map<String, Rate> data);
+  Map<String, Rate>? getExchangeRateData();
+  List<Currency> getFavoriteCurrencies();
   Future<void> saveFavoriteCurrencies(List<Currency> data);
-  Future<Duration> timeSinceLastRatesCache();
+  Duration timeSinceLastRatesCache();
 }
 
 class StorageServiceImpl implements StorageService {
@@ -21,20 +22,28 @@ class StorageServiceImpl implements StorageService {
   static const sharedPrefCurrencyKey = 'currency_key';
   static const sharedPrefLastCacheTimeKey = 'cache_time_key';
 
+  late SharedPreferences prefs;
+
   @override
-  Future<List<Rate>?> getExchangeRateData() async {
-    final data = await _getStringFromPreferences(sharedPrefExchangeRateKey);
+  Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  Map<String, Rate>? getExchangeRateData() {
+    final data = prefs.getString(sharedPrefExchangeRateKey);
     if (data == null) return null;
     return _deserializeRates(data);
   }
 
-  List<Rate>? _deserializeRates(String json) {
-    final rates = <Rate>[];
+  Map<String, Rate>? _deserializeRates(String json) {
+    final rates = <String, Rate>{};
     try {
       final rateList = jsonDecode(json);
-      if (rateList is! List<Map<String, dynamic>>) return rates;
-      for (final rate in rateList) {
-        rates.add(Rate.fromJson(rate));
+      if (rateList is! List) return rates;
+      for (final item in rateList) {
+        final rate = Rate.fromJson(item as Map<String, dynamic>);
+        rates[rate.quoteCurrency] = rate;
       }
     } on FormatException {
       debugPrint('JSON format exception');
@@ -44,16 +53,23 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<void> cacheExchangeRateData(List<Rate> data) async {
-    final list = data.map((rate) => rate.toJson()).toList();
+  Future<void> cacheExchangeRateData(Map<String, Rate> data) async {
+    List<Map<String, dynamic>> list = [];
+    for (final key in data.keys) {
+      final rate = data[key]?.toJson();
+      if (rate != null) {
+        list.add(rate);
+      }
+    }
+    //final list = data.map((rate) => rate.toJson()).toList();
     String jsonString = jsonEncode(list);
-    _saveToPreferences(sharedPrefExchangeRateKey, jsonString);
+    await prefs.setString(sharedPrefExchangeRateKey, jsonString);
     _resetCacheTimeToNow();
   }
 
   @override
-  Future<List<Currency>> getFavoriteCurrencies() async {
-    final data = await _getStringFromPreferences(sharedPrefCurrencyKey);
+  List<Currency> getFavoriteCurrencies() {
+    final data = prefs.getString(sharedPrefCurrencyKey);
     if (data == null) {
       return [];
     }
@@ -77,10 +93,9 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<void> saveFavoriteCurrencies(List<Currency> data) {
+  Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     String jsonString = _serializeCurrencies(data);
-    print('saveFavoriteCurrencies: $jsonString');
-    return _saveToPreferences(sharedPrefCurrencyKey, jsonString);
+    await prefs.setString(sharedPrefCurrencyKey, jsonString);
   }
 
   String _serializeCurrencies(List<Currency> data) {
@@ -89,22 +104,11 @@ class StorageServiceImpl implements StorageService {
   }
 
   @override
-  Future<Duration> timeSinceLastRatesCache() async {
-    final prefs = await SharedPreferences.getInstance();
+  Duration timeSinceLastRatesCache() {
     int timestamp = prefs.getInt(sharedPrefLastCacheTimeKey) ?? 0;
     DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final now = DateTime.now();
     return now.difference(lastUpdate);
-  }
-
-  Future<void> _saveToPreferences(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(key, value);
-  }
-
-  Future<String?> _getStringFromPreferences(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    return Future<String>.value(prefs.getString(key));
   }
 
   Future<void> _resetCacheTimeToNow() async {

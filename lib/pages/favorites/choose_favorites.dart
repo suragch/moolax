@@ -7,7 +7,7 @@ import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {
   @override
-  _ChooseFavoriteCurrencyScreenState createState() =>
+  State<ChooseFavoriteCurrencyScreen> createState() =>
       _ChooseFavoriteCurrencyScreenState();
 }
 
@@ -63,12 +63,12 @@ class _ChooseFavoriteCurrencyScreenState
                           leading: SizedBox(
                             width: 40,
                             child: Text(
-                              '${item.flag}',
+                              item.flag,
                               style: TextStyle(fontSize: 30),
                             ),
                           ),
-                          title: Text('${item.isoCode}'),
-                          subtitle: Text('${item.longName}'),
+                          title: Text(item.isoCode),
+                          subtitle: Text(item.longName),
                           trailing: (item.isFavorite)
                               ? Icon(Icons.favorite,
                                   color: Theme.of(context).colorScheme.primary)

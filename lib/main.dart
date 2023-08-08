@@ -3,10 +3,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:moolax/pages/home/calculate_screen.dart';
+import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/services/service_locator.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
+  final currencyService = getIt<CurrencyService>();
+  await currencyService.init();
   runApp(MyApp());
 }
 
