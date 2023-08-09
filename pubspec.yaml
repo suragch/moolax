@@ -1,6 +1,6 @@
 name: moolax
 description: "Moola X: A foreign currency converter for travelers"
-version: 3.0.0+2
+version: 3.0.0+3
 
 environment:
   sdk: ^3.0.0

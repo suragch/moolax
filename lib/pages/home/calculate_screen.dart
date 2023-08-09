@@ -30,7 +30,10 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
         title: Text('Moola X'),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite),
+            icon: Icon(
+              Icons.favorite,
+              color: Theme.of(context).primaryColor,
+            ),
             onPressed: () async {
               await _goToFavorites(context, manager);
               manager.refreshFavorites(_controller.text);

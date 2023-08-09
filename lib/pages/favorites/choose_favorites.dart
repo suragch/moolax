@@ -114,6 +114,7 @@ class ProBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isVisible) return child;
     return ClipRRect(
+      // borderRadius: BorderRadius.circular(50),
       child: Banner(
         message: 'Pro',
         location: BannerLocation.topEnd,
