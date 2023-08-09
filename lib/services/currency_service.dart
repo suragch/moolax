@@ -107,16 +107,6 @@ class CurrencyServiceImpl implements CurrencyService {
         ),
       ),
     );
-    // double divisor = remoteData
-    //     .firstWhere((rate) => rate.quoteCurrency == base)
-    //     .exchangeRate;
-    // return remoteData
-    //     .map((rate) => Rate(
-    //           baseCurrency: base,
-    //           quoteCurrency: rate.quoteCurrency,
-    //           exchangeRate: rate.exchangeRate / divisor,
-    //         ))
-    //     .toList();
   }
 
   @override

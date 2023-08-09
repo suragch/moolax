@@ -22,9 +22,10 @@ class ChooseFavoritesManager {
     favoritesNotifier.init(initialList);
   }
 
-  List<FavoritePresentation> _prepareChoicePresentation(List<Rate> rates) {
+  List<FavoritePresentation> _prepareChoicePresentation(
+      Map<String, Rate> rates) {
     List<FavoritePresentation> list = [];
-    for (Rate rate in rates) {
+    for (final rate in rates.values) {
       String code = rate.quoteCurrency;
       bool isFavorite = _getFavoriteStatus(code);
       list.add(FavoritePresentation(
@@ -32,8 +33,17 @@ class ChooseFavoritesManager {
         isoCode: code,
         longName: IsoData.longNameOf(code),
         isFavorite: isFavorite,
+        showBanner: IsoData.isPro(code),
       ));
     }
+    list.sort((a, b) {
+      // Show free currencies before pro currencies
+      if (a.showBanner != b.showBanner) {
+        return a.showBanner ? 1 : -1;
+      }
+      // Then sort alphabetically
+      return a.isoCode.compareTo(b.isoCode);
+    });
     return list;
   }
 
@@ -79,13 +89,15 @@ class FavoritePresentation {
   final String flag;
   final String isoCode;
   final String longName;
-  bool isFavorite;
+  final bool isFavorite;
+  final bool showBanner;
 
   FavoritePresentation({
     required this.flag,
     required this.isoCode,
     required this.longName,
     required this.isFavorite,
+    required this.showBanner,
   });
 }
 
@@ -100,21 +112,36 @@ class FavoritesNotifier extends ValueNotifier<List<FavoritePresentation>> {
   }
 
   void refresh() {
-    notifyListeners(); // here
+    notifyListeners();
   }
 
   bool toggleFavorite(String isoCode) {
     final choiceIndex = _fullList.indexWhere(
       (element) => element.isoCode == isoCode,
     );
-    final isFavorite = !_fullList[choiceIndex].isFavorite;
-    _fullList[choiceIndex].isFavorite = isFavorite;
+    final item = _fullList[choiceIndex];
+    final isFavorite = !item.isFavorite;
+    _fullList[choiceIndex] = FavoritePresentation(
+      flag: item.flag,
+      isoCode: item.isoCode,
+      longName: item.longName,
+      isFavorite: isFavorite,
+      showBanner: item.showBanner,
+    );
+    filter(_filter);
     notifyListeners();
     return isFavorite;
   }
 
+  String _filter = '';
+
   void filter(String search) {
+    if (search.isEmpty) {
+      value = _fullList;
+      return;
+    }
     final cleaned = search.trim().toUpperCase();
+    _filter = cleaned;
     value = _fullList
         .where(
           (element) =>

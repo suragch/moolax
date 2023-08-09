@@ -12,6 +12,34 @@ class IsoData {
     return data[code]?['name'] ?? 'unknown name';
   }
 
+  static bool isPro(String code) {
+    return !freeVersionCurrencies.contains(code);
+  }
+
+  static const freeVersionCurrencies = {
+    'USD',
+    'EUR',
+    'GBP',
+    'CAD',
+    'AUD',
+    'JPY',
+    'CNY',
+    'CHF',
+    'HKD',
+    'INR',
+    'MXN',
+    'ZAR',
+    'SGD',
+    'NZD',
+    'SEK',
+    'KRW',
+    'RUB',
+    'BRL',
+    'ARS',
+    'TRY',
+    'MNT'
+  };
+
   // ISO data comes from https://en.wikipedia.org/wiki/ISO_4217
   static final Map<String, Map<String, String>> data = {
     'AED': {'name': 'United Arab Emirates dirhams', 'flag': '🇦🇪'},

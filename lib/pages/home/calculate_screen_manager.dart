@@ -127,6 +127,7 @@ class CalculateScreenManager extends ChangeNotifier {
     final favorites = await _currencyService.getFavoriteCurrencies();
     favorites.removeWhere((currency) => currency.isoCode == isoCode);
     _currencyService.saveFavoriteCurrencies(favorites);
+    _quoteCurrencies.removeWhere((currency) => currency.isoCode == isoCode);
   }
 }
 

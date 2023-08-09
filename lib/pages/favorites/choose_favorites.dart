@@ -23,6 +23,7 @@ class _ChooseFavoriteCurrencyScreenState
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(
         title: Text('Choose Currencies'),
@@ -30,8 +31,12 @@ class _ChooseFavoriteCurrencyScreenState
       body: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(top: 32, left: 20, right: 20, bottom: 32),
+            padding: const EdgeInsets.only(
+              top: 32,
+              left: 20,
+              right: 20,
+              bottom: 10,
+            ),
             child: TextField(
               style: TextStyle(fontSize: 20),
               decoration: InputDecoration(
@@ -59,23 +64,26 @@ class _ChooseFavoriteCurrencyScreenState
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Card(
-                        child: ListTile(
-                          leading: SizedBox(
-                            width: 40,
-                            child: Text(
-                              item.flag,
-                              style: TextStyle(fontSize: 30),
+                        child: ProBanner(
+                          isVisible: item.showBanner,
+                          primaryColor: primaryColor,
+                          child: ListTile(
+                            leading: SizedBox(
+                              width: 40,
+                              child: Text(
+                                item.flag,
+                                style: TextStyle(fontSize: 30),
+                              ),
                             ),
+                            title: Text(item.isoCode),
+                            subtitle: Text(item.longName),
+                            trailing: (item.isFavorite)
+                                ? Icon(Icons.favorite, color: primaryColor)
+                                : Icon(Icons.favorite_border),
+                            onTap: () {
+                              manager.toggleFavoriteStatus(item.isoCode);
+                            },
                           ),
-                          title: Text(item.isoCode),
-                          subtitle: Text(item.longName),
-                          trailing: (item.isFavorite)
-                              ? Icon(Icons.favorite,
-                                  color: Theme.of(context).colorScheme.primary)
-                              : Icon(Icons.favorite_border),
-                          onTap: () {
-                            manager.toggleFavoriteStatus(item.isoCode);
-                          },
                         ),
                       ),
                     );
@@ -85,6 +93,32 @@ class _ChooseFavoriteCurrencyScreenState
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProBanner extends StatelessWidget {
+  const ProBanner({
+    super.key,
+    required this.child,
+    required this.primaryColor,
+    required this.isVisible,
+  });
+
+  final Color primaryColor;
+  final Widget child;
+  final bool isVisible;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isVisible) return child;
+    return ClipRRect(
+      child: Banner(
+        message: 'Pro',
+        location: BannerLocation.topEnd,
+        color: primaryColor,
+        child: child,
       ),
     );
   }
