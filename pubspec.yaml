@@ -12,6 +12,7 @@ dependencies:
   get_it: ^7.6.0
   http: ^1.1.0
   intl: ^0.18.1
+  purchases_flutter: ^5.6.0
   shared_preferences: ^2.2.0
 
 dev_dependencies:

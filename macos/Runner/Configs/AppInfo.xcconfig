@@ -8,7 +8,7 @@
 PRODUCT_NAME = moolax
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.kodeco.moolax
+PRODUCT_BUNDLE_IDENTIFIER = dev.suragch.moolax
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.kodeco. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 dev.suragch. All rights reserved.

@@ -1,4 +1,4 @@
-package com.kodeco.moolax
+package dev.suragch.moolax
 
 import io.flutter.embedding.android.FlutterActivity
 
