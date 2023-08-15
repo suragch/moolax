@@ -49,7 +49,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async {
-                  await _goToFavorites(context, manager);
+                  await _goToFavorites(context);
                   manager.refreshFavorites(_controller.text);
                 },
               )
@@ -99,10 +99,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
   }
 }
 
-Future<void> _goToFavorites(
-  BuildContext context,
-  CalculateScreenManager manager,
-) async {
+Future<void> _goToFavorites(BuildContext context) async {
   await Navigator.push(
     context,
     MaterialPageRoute(
@@ -206,7 +203,7 @@ class FavoritesList extends StatelessWidget {
       return Center(
         child: ElevatedButton(
           onPressed: () async {
-            await _goToFavorites(context, manager);
+            await _goToFavorites(context);
             manager.refreshFavorites(controller.text);
           },
           child: Text('Choose exchange currency'),

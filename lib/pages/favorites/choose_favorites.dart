@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:moolax/pages/favorites/choose_favorites_manager.dart';
+import 'package:moolax/pages/paywall/paywall.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {
@@ -81,7 +82,11 @@ class _ChooseFavoriteCurrencyScreenState
                                 ? Icon(Icons.favorite, color: primaryColor)
                                 : Icon(Icons.favorite_border),
                             onTap: () {
-                              manager.toggleFavoriteStatus(item.isoCode);
+                              if (item.showBanner) {
+                                _showPaywall(context);
+                              } else {
+                                manager.toggleFavoriteStatus(item.isoCode);
+                              }
                             },
                           ),
                         ),
@@ -96,6 +101,15 @@ class _ChooseFavoriteCurrencyScreenState
       ),
     );
   }
+}
+
+Future<void> _showPaywall(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PaywallScreen(),
+    ),
+  );
 }
 
 class ProBanner extends StatelessWidget {
