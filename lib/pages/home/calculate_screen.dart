@@ -19,32 +19,43 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
 
   @override
   void initState() {
+    manager.onNetworkError = _handleNetworkError;
     manager.loadData();
     super.initState();
   }
 
+  void _handleNetworkError(String errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Moola X'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.favorite,
-              color: Theme.of(context).primaryColor,
-            ),
-            onPressed: () async {
-              await _goToFavorites(context, manager);
-              manager.refreshFavorites(_controller.text);
-            },
-          )
-        ],
-      ),
-      body: ListenableBuilder(
-        listenable: manager,
-        builder: (context, child) {
-          return Column(
+    return ListenableBuilder(
+      listenable: manager,
+      builder: (context, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Moola X'),
+            actions: [
+              if (manager.refreshState != RefreshState.hidden)
+                _getRefreshWidget(),
+              IconButton(
+                icon: Icon(
+                  Icons.favorite,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () async {
+                  await _goToFavorites(context, manager);
+                  manager.refreshFavorites(_controller.text);
+                },
+              )
+            ],
+          ),
+          body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Title(manager: manager),
@@ -59,8 +70,30 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                 focusNode: _focusNode,
               ),
             ],
-          );
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _getRefreshWidget() {
+    if (manager.refreshState == RefreshState.showingButton) {
+      return IconButton(
+        icon: Icon(
+          Icons.refresh,
+          color: Theme.of(context).primaryColor,
+        ),
+        onPressed: () async {
+          manager.forceRefresh();
         },
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(),
       ),
     );
   }

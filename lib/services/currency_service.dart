@@ -14,6 +14,7 @@ abstract class CurrencyService {
   Future<List<Currency>> getFavoriteCurrencies();
   Future<void> saveFavoriteCurrencies(List<Currency> data);
   void Function(Duration)? staleCacheListener;
+  Future<void> purgeLocalCache();
 }
 
 class CurrencyServiceImpl implements CurrencyService {
@@ -112,5 +113,12 @@ class CurrencyServiceImpl implements CurrencyService {
   @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     await _storageService.saveFavoriteCurrencies(data);
+  }
+
+  @override
+  Future<void> purgeLocalCache() async {
+    _rateCache = null;
+    _webApi.purgeInMemoryCache();
+    await _storageService.purgeLocalCache();
   }
 }

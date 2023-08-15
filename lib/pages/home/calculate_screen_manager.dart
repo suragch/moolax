@@ -9,9 +9,12 @@ import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
 import 'package:moolax/services/service_locator.dart';
 
-// This class handles the currency conversion and puts it in a form convenient
-// for displaying on a view (though it known nothing about any particular view).
+enum RefreshState { hidden, showingButton, refreshing }
+
 class CalculateScreenManager extends ChangeNotifier {
+  var refreshState = RefreshState.hidden;
+
+  void Function(String)? onNetworkError;
   final CurrencyService _currencyService = getIt<CurrencyService>();
 
   CurrencyPresentation _baseCurrency = defaultBaseCurrency;
@@ -25,14 +28,28 @@ class CalculateScreenManager extends ChangeNotifier {
     amount: '',
   );
 
-  void loadData() async {
+  Future<void> loadData() async {
     await _loadCurrencies();
     notifyListeners();
     print('getting rates');
     _rates = await _currencyService.getAllExchangeRates(
       base: _baseCurrency.isoCode,
     );
+    if (_rates.isEmpty) {
+      onNetworkError?.call('There was a problem fetching the exchange rates '
+          'from the server. Try again later.');
+      refreshState = RefreshState.showingButton;
+    } else {
+      refreshState = RefreshState.hidden;
+    }
     notifyListeners();
+  }
+
+  Future<void> forceRefresh() async {
+    refreshState = RefreshState.refreshing;
+    notifyListeners();
+    await _currencyService.purgeLocalCache();
+    await loadData();
   }
 
   Future<void> _loadCurrencies() async {
@@ -94,7 +111,7 @@ class CalculateScreenManager extends ChangeNotifier {
       decimalDigits: 2,
     );
     for (final currency in _quoteCurrencies) {
-      final rate = _rates[currency.isoCode]!.exchangeRate;
+      final rate = _rates[currency.isoCode]?.exchangeRate ?? 0.0;
       currency.amount = formatter.format(baseAmount * rate);
     }
   }

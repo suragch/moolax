@@ -10,6 +10,7 @@ import 'package:moolax/secrets.dart';
 
 abstract class WebApi {
   Future<Map<String, Rate>?> fetchExchangeRates();
+  void purgeInMemoryCache();
 }
 
 class WebApiImpl implements WebApi {
@@ -50,6 +51,7 @@ class WebApiImpl implements WebApi {
     }
 
     // extract the data
+    print(response.body);
     try {
       final jsonObject = json.decode(response.body);
       _rateCache = _createRateListFromRawMap(jsonObject);
@@ -74,5 +76,10 @@ class WebApiImpl implements WebApi {
         ),
       ),
     );
+  }
+
+  @override
+  void purgeInMemoryCache() {
+    _rateCache = null;
   }
 }

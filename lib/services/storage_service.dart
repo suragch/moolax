@@ -15,12 +15,13 @@ abstract class StorageService {
   List<Currency> getFavoriteCurrencies();
   Future<void> saveFavoriteCurrencies(List<Currency> data);
   Duration timeSinceLastRatesCache();
+  Future<void> purgeLocalCache();
 }
 
 class StorageServiceImpl implements StorageService {
-  static const sharedPrefExchangeRateKey = 'exchange_rate_key';
-  static const sharedPrefCurrencyKey = 'currency_key';
-  static const sharedPrefLastCacheTimeKey = 'cache_time_key';
+  static const _exchangeRateKey = 'exchange_rate_key';
+  static const _favoriteCurrencyKey = 'currency_key';
+  static const _lastCacheTimeKey = 'cache_time_key';
 
   late SharedPreferences prefs;
 
@@ -31,7 +32,7 @@ class StorageServiceImpl implements StorageService {
 
   @override
   Map<String, Rate>? getExchangeRateData() {
-    final data = prefs.getString(sharedPrefExchangeRateKey);
+    final data = prefs.getString(_exchangeRateKey);
     if (data == null) return null;
     return _deserializeRates(data);
   }
@@ -63,13 +64,13 @@ class StorageServiceImpl implements StorageService {
     }
     //final list = data.map((rate) => rate.toJson()).toList();
     String jsonString = jsonEncode(list);
-    await prefs.setString(sharedPrefExchangeRateKey, jsonString);
+    await prefs.setString(_exchangeRateKey, jsonString);
     _resetCacheTimeToNow();
   }
 
   @override
   List<Currency> getFavoriteCurrencies() {
-    final data = prefs.getString(sharedPrefCurrencyKey);
+    final data = prefs.getString(_favoriteCurrencyKey);
     if (data == null) {
       return [];
     }
@@ -95,7 +96,7 @@ class StorageServiceImpl implements StorageService {
   @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     String jsonString = _serializeCurrencies(data);
-    await prefs.setString(sharedPrefCurrencyKey, jsonString);
+    await prefs.setString(_favoriteCurrencyKey, jsonString);
   }
 
   String _serializeCurrencies(List<Currency> data) {
@@ -105,7 +106,7 @@ class StorageServiceImpl implements StorageService {
 
   @override
   Duration timeSinceLastRatesCache() {
-    int timestamp = prefs.getInt(sharedPrefLastCacheTimeKey) ?? 0;
+    int timestamp = prefs.getInt(_lastCacheTimeKey) ?? 0;
     DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final now = DateTime.now();
     return now.difference(lastUpdate);
@@ -114,6 +115,12 @@ class StorageServiceImpl implements StorageService {
   Future<void> _resetCacheTimeToNow() async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt(sharedPrefLastCacheTimeKey, timestamp);
+    prefs.setInt(_lastCacheTimeKey, timestamp);
+  }
+
+  @override
+  Future<void> purgeLocalCache() async {
+    await prefs.remove(_lastCacheTimeKey);
+    await prefs.remove(_exchangeRateKey);
   }
 }
