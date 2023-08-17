@@ -2,6 +2,7 @@
 /// See LICENSE for details.
 
 import 'package:flutter/material.dart';
+import 'package:in_app_purchases_paywall_ui/in_app_purchases_paywall_ui.dart';
 import 'package:moolax/pages/favorites/choose_favorites_manager.dart';
 import 'package:moolax/pages/paywall/paywall.dart';
 import 'package:moolax/services/service_locator.dart';
@@ -104,10 +105,21 @@ class _ChooseFavoriteCurrencyScreenState
 }
 
 Future<void> _showPaywall(BuildContext context) async {
+  // showModalBottomSheet(
+  //   context: context,
+  //   // isScrollControlled: true,
+  //   shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(
+  //     top: Radius.circular(20),
+  //   )),
+  //   builder: (context) {
+  //     return MoolaxPaywall();
+  //   },
+  // );
   await Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => PaywallScreen(),
+      builder: (context) => MoolaxPaywall(),
     ),
   );
 }
