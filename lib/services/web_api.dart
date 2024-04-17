@@ -2,6 +2,7 @@
 // See LICENSE for details.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:moolax/core/rate.dart';
@@ -14,7 +15,10 @@ abstract class WebApi {
 }
 
 class WebApiImpl implements WebApi {
-  final _host = 'moolax.suragch.dev';
+  // final _host = 'moolax.suragch.dev';
+  String get _host =>
+      Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://127.0.0.1:8080';
+  // final _host = 'moolax.suragch.dev';
   final _path = 'api';
   final Map<String, String> _headers = {
     'Accept': 'application/json',
@@ -42,7 +46,7 @@ class WebApiImpl implements WebApi {
 
     // look the data up on the server
     print('getting rates from the web');
-    final uri = Uri.https(_host, _path);
+    final uri = Uri.parse('$_host/$_path');
     final response = await http.get(uri, headers: _headers);
     if (response.statusCode != 200) {
       print('Unexpected status code: ${response.statusCode}');

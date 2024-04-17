@@ -1,15 +1,14 @@
 PODS:
   - connectivity_plus (0.0.1):
+    - Flutter
     - FlutterMacOS
-    - ReachabilitySwift
   - FlutterMacOS (1.0.0)
-  - purchases_flutter (5.6.0):
+  - purchases_flutter (6.26.0):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 5.6.0)
-  - PurchasesHybridCommon (5.6.0):
-    - RevenueCat (= 4.25.2)
-  - ReachabilitySwift (5.0.0)
-  - RevenueCat (4.25.2)
+    - PurchasesHybridCommon (= 10.4.0)
+  - PurchasesHybridCommon (10.4.0):
+    - RevenueCat (= 4.40.0)
+  - RevenueCat (4.40.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -17,21 +16,21 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
-  - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos`)
+  - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/darwin`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - purchases_flutter (from `Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos`)
+  - RevenueCat
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
 
 SPEC REPOS:
   trunk:
     - PurchasesHybridCommon
-    - ReachabilitySwift
     - RevenueCat
 
 EXTERNAL SOURCES:
   connectivity_plus:
-    :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos
+    :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/darwin
   FlutterMacOS:
     :path: Flutter/ephemeral
   purchases_flutter:
@@ -42,15 +41,14 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
 
 SPEC CHECKSUMS:
-  connectivity_plus: 18d3c32514c886e046de60e9c13895109866c747
+  connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  purchases_flutter: cfca4cfaf4516c0503d0b1f8b9d5e7fcce6cea11
-  PurchasesHybridCommon: 45fc4487e06787e4b071510f9230e180f49a0a5f
-  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  RevenueCat: 3997b7af3ded18a59346e76f1365cae5a64f4281
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
+  purchases_flutter: a18be4f0b6da4314ae3c22376296d79c45327f5a
+  PurchasesHybridCommon: 70b93acd428e5f67a4d2f13de4c4eb229e4ff39f
+  RevenueCat: f33d2bb58e75afc68d3a8cf193971f008f553a2c
+  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   url_launcher_macos: d2691c7dd33ed713bf3544850a623080ec693d95
 
-PODFILE CHECKSUM: 236401fc2c932af29a9fcf0e97baeeb2d750d367
+PODFILE CHECKSUM: 48d512d4f92dd65b57ec14fa16c9e6e86f3604e5
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2
