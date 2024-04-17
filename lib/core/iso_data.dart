@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 class IsoData {
   /// Gives a flag for a three character ISO alphabetic [code].

@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 class Currency {
   // Use an ISO alphabetic code.

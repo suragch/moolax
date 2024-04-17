@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:flutter/foundation.dart';
 import 'package:moolax/core/currency.dart';

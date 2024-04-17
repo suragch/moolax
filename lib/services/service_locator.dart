@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:get_it/get_it.dart';
 import 'package:moolax/pages/favorites/choose_favorites_manager.dart';

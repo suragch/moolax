@@ -1,13 +1,14 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:flutter/material.dart';
-import 'package:in_app_purchases_paywall_ui/in_app_purchases_paywall_ui.dart';
 import 'package:moolax/pages/favorites/choose_favorites_manager.dart';
 import 'package:moolax/pages/paywall/paywall.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {
+  const ChooseFavoriteCurrencyScreen({super.key});
+
   @override
   State<ChooseFavoriteCurrencyScreen> createState() =>
       _ChooseFavoriteCurrencyScreenState();
@@ -28,7 +29,7 @@ class _ChooseFavoriteCurrencyScreenState
     final primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Currencies'),
+        title: const Text('Choose Currencies'),
       ),
       body: Column(
         children: [
@@ -40,8 +41,8 @@ class _ChooseFavoriteCurrencyScreenState
               bottom: 10,
             ),
             child: TextField(
-              style: TextStyle(fontSize: 20),
-              decoration: InputDecoration(
+              style: const TextStyle(fontSize: 20),
+              decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 labelStyle: TextStyle(fontSize: 20),
                 hintStyle: TextStyle(fontSize: 20),
@@ -74,14 +75,14 @@ class _ChooseFavoriteCurrencyScreenState
                               width: 40,
                               child: Text(
                                 item.flag,
-                                style: TextStyle(fontSize: 30),
+                                style: const TextStyle(fontSize: 30),
                               ),
                             ),
                             title: Text(item.isoCode),
                             subtitle: Text(item.longName),
                             trailing: (item.isFavorite)
                                 ? Icon(Icons.favorite, color: primaryColor)
-                                : Icon(Icons.favorite_border),
+                                : const Icon(Icons.favorite_border),
                             onTap: () {
                               if (item.showBanner) {
                                 _showPaywall(context);
@@ -118,8 +119,8 @@ Future<void> _showPaywall(BuildContext context) async {
   // );
   await Navigator.push(
     context,
-    MaterialPageRoute(
-      builder: (context) => MoolaxPaywall(),
+    MaterialPageRoute<void>(
+      builder: (context) => const MoolaxPaywall(),
     ),
   );
 }

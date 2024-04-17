@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'dart:convert';
 
@@ -35,7 +35,7 @@ class WebApiImpl implements WebApi {
 
     // check the network connection
     final connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
       print('No Internet connection');
       return null;
     }

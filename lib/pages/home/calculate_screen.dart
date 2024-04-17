@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:flutter/material.dart';
 import 'package:moolax/pages/favorites/choose_favorites.dart';
@@ -7,6 +7,8 @@ import 'package:moolax/pages/home/calculate_screen_manager.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class CalculateCurrencyScreen extends StatefulWidget {
+  const CalculateCurrencyScreen({super.key});
+
   @override
   State<CalculateCurrencyScreen> createState() =>
       _CalculateCurrencyScreenState();
@@ -39,7 +41,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
       builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Moola X'),
+            title: const Text('Moola X'),
             actions: [
               if (manager.refreshState != RefreshState.hidden)
                 _getRefreshWidget(),
@@ -88,8 +90,8 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
         },
       );
     }
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
       child: SizedBox(
         width: 24,
         height: 24,
@@ -102,8 +104,8 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
 Future<void> _goToFavorites(BuildContext context) async {
   await Navigator.push(
     context,
-    MaterialPageRoute(
-      builder: (context) => ChooseFavoriteCurrencyScreen(),
+    MaterialPageRoute<void>(
+      builder: (context) => const ChooseFavoriteCurrencyScreen(),
     ),
   );
 }
@@ -128,7 +130,7 @@ class Title extends StatelessWidget {
 }
 
 class InputBox extends StatelessWidget {
-  InputBox({
+  const InputBox({
     super.key,
     required this.controller,
     required this.manager,
@@ -143,43 +145,41 @@ class InputBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32),
-      child: Container(
-        child: TextField(
-          style: TextStyle(fontSize: 20),
-          controller: controller,
-          autofocus: true,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: SizedBox(
-                width: 50,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    manager.baseCurrency.flag,
-                    style: TextStyle(fontSize: 30),
-                  ),
+      child: TextField(
+        style: const TextStyle(fontSize: 20),
+        controller: controller,
+        autofocus: true,
+        focusNode: focusNode,
+        decoration: InputDecoration(
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: SizedBox(
+              width: 50,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  manager.baseCurrency.flag,
+                  style: const TextStyle(fontSize: 30),
                 ),
               ),
             ),
-            hintStyle: TextStyle(fontSize: 14),
-            hintText: 'Amount to exchange',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            ),
-            contentPadding: EdgeInsets.all(20),
-            suffix: IconButton(
-              icon: Icon(Icons.clear),
-              onPressed: () {
-                controller.clear();
-                manager.calculateExchange('');
-              },
-            ),
           ),
-          keyboardType: TextInputType.number,
-          onChanged: manager.calculateExchange,
+          hintStyle: const TextStyle(fontSize: 14),
+          hintText: 'Amount to exchange',
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          contentPadding: const EdgeInsets.all(20),
+          suffix: IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              controller.clear();
+              manager.calculateExchange('');
+            },
+          ),
         ),
+        keyboardType: TextInputType.number,
+        onChanged: manager.calculateExchange,
       ),
     );
   }
@@ -206,7 +206,7 @@ class FavoritesList extends StatelessWidget {
             await _goToFavorites(context);
             manager.refreshFavorites(controller.text);
           },
-          child: Text('Choose exchange currency'),
+          child: const Text('Choose exchange currency'),
         ),
       );
     }
@@ -228,7 +228,7 @@ class FavoritesList extends StatelessWidget {
                     width: 40,
                     child: Text(
                       currency.flag,
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                     ),
                   ),
                   title: Text(currency.amount),

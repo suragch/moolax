@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +31,6 @@ class CalculateScreenManager extends ChangeNotifier {
   Future<void> loadData() async {
     await _loadCurrencies();
     notifyListeners();
-    print('getting rates');
     _rates = await _currencyService.getAllExchangeRates(
       base: _baseCurrency.isoCode,
     );
@@ -100,7 +99,6 @@ class CalculateScreenManager extends ChangeNotifier {
     } on FormatException {
       amount = 0;
     }
-    print('amount: $amount');
     _updateCurrenciesFor(amount);
     notifyListeners();
   }

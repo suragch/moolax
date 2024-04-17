@@ -14,9 +14,10 @@ class MoolaxPaywall extends StatelessWidget {
         title: 'Upgrade to Pro',
         subTitle: 'Pro accounts include:',
         continueText: 'This is continue text',
-        tosData: TextAndUrl('Terms of Service', 'https://www.example.com'),
-        ppData: TextAndUrl('Privacy Policy', 'https://www.example.com'),
-        bulletPoints: [
+        tosData:
+            const TextAndUrl('Terms of Service', 'https://www.example.com'),
+        ppData: const TextAndUrl('Privacy Policy', 'https://www.example.com'),
+        bulletPoints: const [
           IconAndText(Icons.star, 'Access to all available currencies'),
         ],
         restoreText: 'Restore purchase',
@@ -43,7 +44,7 @@ class MoolaxPaywall extends StatelessWidget {
         ],
         // callbackInterface: CallbackInterface,
         // purchaseStateStreamInterface: PurchaseStateStreamInterface,
-        activePlanList: [
+        activePlanList: const [
           GooglePlayActivePlan(
             'productId',
             'dev.suragch.moolax',

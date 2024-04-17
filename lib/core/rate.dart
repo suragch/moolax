@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 class Rate {
   /// Use an ISO alphabetic code.
@@ -33,7 +33,7 @@ class Rate {
         exchangeRate: exchangeRate,
       );
     } else {
-      throw FormatException('Invalid JSON');
+      throw const FormatException('Invalid JSON');
     }
   }
 

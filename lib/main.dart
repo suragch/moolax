@@ -1,5 +1,5 @@
-/// Copyright (c) 2019 Razeware LLC
-/// See LICENSE for details.
+// Copyright (c) 2019 Razeware LLC
+// See LICENSE for details.
 
 import 'package:flutter/material.dart';
 import 'package:moolax/pages/home/calculate_screen.dart';
@@ -11,10 +11,12 @@ Future<void> main() async {
   setupServiceLocator();
   final currencyService = getIt<CurrencyService>();
   await currencyService.init();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.green,
       ),
-      home: CalculateCurrencyScreen(),
+      home: const CalculateCurrencyScreen(),
     );
   }
 }
