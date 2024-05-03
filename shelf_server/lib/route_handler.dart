@@ -6,7 +6,7 @@ import 'package:shelf_router/shelf_router.dart';
 
 import 'secrets.dart';
 
-final router = Router()..get('/api', _handler);
+final router = Router()..get('/', _handler);
 
 String? _fxCache;
 DateTime? _cacheDate;
