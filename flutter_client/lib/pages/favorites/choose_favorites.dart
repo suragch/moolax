@@ -10,12 +10,10 @@ class ChooseFavoriteCurrencyScreen extends StatefulWidget {
   const ChooseFavoriteCurrencyScreen({super.key});
 
   @override
-  State<ChooseFavoriteCurrencyScreen> createState() =>
-      _ChooseFavoriteCurrencyScreenState();
+  State<ChooseFavoriteCurrencyScreen> createState() => _ChooseFavoriteCurrencyScreenState();
 }
 
-class _ChooseFavoriteCurrencyScreenState
-    extends State<ChooseFavoriteCurrencyScreen> {
+class _ChooseFavoriteCurrencyScreenState extends State<ChooseFavoriteCurrencyScreen> {
   ChooseFavoritesManager manager = getIt<ChooseFavoritesManager>();
 
   @override
@@ -106,22 +104,12 @@ class _ChooseFavoriteCurrencyScreenState
 }
 
 Future<void> _showPaywall(BuildContext context) async {
-  // showModalBottomSheet(
-  //   context: context,
-  //   // isScrollControlled: true,
-  //   shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(
-  //     top: Radius.circular(20),
-  //   )),
-  //   builder: (context) {
-  //     return MoolaxPaywall();
-  //   },
-  // );
-  await Navigator.push(
-    context,
-    MaterialPageRoute<void>(
-      builder: (context) => const MoolaxPaywall(),
-    ),
+  final height = MediaQuery.sizeOf(context).height * 0.8;
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    constraints: BoxConstraints(maxHeight: height),
+    builder: (context) => const PaywallPage(),
   );
 }
 

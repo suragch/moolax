@@ -2,7 +2,6 @@
 // See LICENSE for details.
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:moolax/core/rate.dart';
@@ -15,10 +14,9 @@ abstract class WebApi {
 }
 
 class WebApiImpl implements WebApi {
-  // final _host = 'moolax.suragch.dev';
-  String get _host =>
-      Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://127.0.0.1:8080';
-  // final _host = 'moolax.suragch.dev';
+  final _host = 'https://moolax.suragch.dev';
+  // String get _host =>
+  //     Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://127.0.0.1:8080';
   final _path = 'api';
   final Map<String, String> _headers = {
     'Accept': 'application/json',
