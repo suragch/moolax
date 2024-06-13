@@ -10,8 +10,7 @@ class CalculateCurrencyScreen extends StatefulWidget {
   const CalculateCurrencyScreen({super.key});
 
   @override
-  State<CalculateCurrencyScreen> createState() =>
-      _CalculateCurrencyScreenState();
+  State<CalculateCurrencyScreen> createState() => _CalculateCurrencyScreenState();
 }
 
 class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
@@ -43,8 +42,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
           appBar: AppBar(
             title: const Text('Moola X'),
             actions: [
-              if (manager.refreshState != RefreshState.hidden)
-                _getRefreshWidget(),
+              if (manager.refreshState != RefreshState.hidden) _getRefreshWidget(),
               IconButton(
                 icon: Icon(
                   Icons.favorite,
@@ -98,6 +96,12 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
         child: CircularProgressIndicator(),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    manager.dispose();
+    super.dispose();
   }
 }
 

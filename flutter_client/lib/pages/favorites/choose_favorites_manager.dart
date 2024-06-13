@@ -6,13 +6,13 @@ import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
+import 'package:moolax/services/iap_service.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoritesManager {
   final _currencyService = getIt<CurrencyService>();
   final favoritesNotifier = FavoritesNotifier();
 
-  //List<FavoritePresentation> _fullList = [];
   List<Currency> _favorites = [];
 
   void loadData() async {
@@ -22,8 +22,8 @@ class ChooseFavoritesManager {
     favoritesNotifier.init(initialList);
   }
 
-  List<FavoritePresentation> _prepareChoicePresentation(
-      Map<String, Rate> rates) {
+  List<FavoritePresentation> _prepareChoicePresentation(Map<String, Rate> rates) {
+    final iapService = getIt<IapService>();
     List<FavoritePresentation> list = [];
     for (final rate in rates.values) {
       String code = rate.quoteCurrency;
@@ -33,7 +33,7 @@ class ChooseFavoritesManager {
         isoCode: code,
         longName: IsoData.longNameOf(code),
         isFavorite: isFavorite,
-        showBanner: IsoData.isPro(code),
+        showBanner: IsoData.isPro(code) && !iapService.hasPro,
       ));
     }
     list.sort((a, b) {
@@ -144,9 +144,7 @@ class FavoritesNotifier extends ValueNotifier<List<FavoritePresentation>> {
     _filter = cleaned;
     value = _fullList
         .where(
-          (element) =>
-              element.isoCode.contains(cleaned) ||
-              element.longName.toUpperCase().contains(cleaned),
+          (element) => element.isoCode.contains(cleaned) || element.longName.toUpperCase().contains(cleaned),
         )
         .toList();
   }
