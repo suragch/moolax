@@ -1,4 +1,4 @@
-package com.example.flutter_client
+package dev.suragch.moolax
 
 import io.flutter.embedding.android.FlutterActivity
 
