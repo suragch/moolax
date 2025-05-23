@@ -2,35 +2,24 @@
 // See LICENSE for details.
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-abstract class StorageService {
-  Future<void> init();
-  Future<void> cacheExchangeRateData(Map<String, Rate> data);
-  Map<String, Rate>? getExchangeRateData();
-  List<Currency> getFavoriteCurrencies();
-  Future<void> saveFavoriteCurrencies(List<Currency> data);
-  Duration timeSinceLastRatesCache();
-  Future<void> purgeLocalCache();
-}
-
-class StorageServiceImpl implements StorageService {
+class StorageService {
   static const _exchangeRateKey = 'exchange_rate_key';
   static const _favoriteCurrencyKey = 'currency_key';
   static const _lastCacheTimeKey = 'cache_time_key';
 
   late SharedPreferences prefs;
 
-  @override
   Future<void> init() async {
     prefs = await SharedPreferences.getInstance();
   }
 
-  @override
   Map<String, Rate>? getExchangeRateData() {
     final data = prefs.getString(_exchangeRateKey);
     if (data == null) return null;
@@ -53,7 +42,6 @@ class StorageServiceImpl implements StorageService {
     return rates;
   }
 
-  @override
   Future<void> cacheExchangeRateData(Map<String, Rate> data) async {
     List<Map<String, dynamic>> list = [];
     for (final key in data.keys) {
@@ -68,13 +56,12 @@ class StorageServiceImpl implements StorageService {
     _resetCacheTimeToNow();
   }
 
-  @override
   List<Currency> getFavoriteCurrencies() {
     final data = prefs.getString(_favoriteCurrencyKey);
     if (data == null) {
       return [];
     }
-    print('getFavoriteCurrencies: $data');
+    log('getFavoriteCurrencies: $data');
     return _deserializeCurrencies(data);
   }
 
@@ -93,7 +80,6 @@ class StorageServiceImpl implements StorageService {
     return list;
   }
 
-  @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     String jsonString = _serializeCurrencies(data);
     await prefs.setString(_favoriteCurrencyKey, jsonString);
@@ -104,12 +90,16 @@ class StorageServiceImpl implements StorageService {
     return jsonEncode(currencies);
   }
 
-  @override
   Duration timeSinceLastRatesCache() {
     int timestamp = prefs.getInt(_lastCacheTimeKey) ?? 0;
     DateTime lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final now = DateTime.now();
     return now.difference(lastUpdate);
+  }
+
+  DateTime get lastCacheDate {
+    int timestamp = prefs.getInt(_lastCacheTimeKey) ?? 0;
+    return DateTime.fromMillisecondsSinceEpoch(timestamp);
   }
 
   Future<void> _resetCacheTimeToNow() async {
@@ -118,7 +108,6 @@ class StorageServiceImpl implements StorageService {
     prefs.setInt(_lastCacheTimeKey, timestamp);
   }
 
-  @override
   Future<void> purgeLocalCache() async {
     await prefs.remove(_lastCacheTimeKey);
     await prefs.remove(_exchangeRateKey);

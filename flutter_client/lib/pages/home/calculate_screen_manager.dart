@@ -8,14 +8,18 @@ import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
 import 'package:moolax/services/service_locator.dart';
+import 'package:moolax/services/storage_service.dart';
 
 enum RefreshState { hidden, showingButton, refreshing }
 
 class CalculateScreenManager extends ChangeNotifier {
   var refreshState = RefreshState.hidden;
+  // final updateNotifier = ValueNotifier<String>('');
+  String refreshDate = '';
 
   void Function(String)? onNetworkError;
-  final CurrencyService _currencyService = getIt<CurrencyService>();
+  final _currencyService = getIt<CurrencyService>();
+  final _storageService = getIt<StorageService>();
 
   CurrencyPresentation _baseCurrency = defaultBaseCurrency;
   List<CurrencyPresentation> _quoteCurrencies = [];
@@ -34,6 +38,7 @@ class CalculateScreenManager extends ChangeNotifier {
     _rates = await _currencyService.getAllExchangeRates(
       base: _baseCurrency.isoCode,
     );
+    refreshDate = _formatCacheDate(_storageService.lastCacheDate);
     if (_rates.isEmpty) {
       onNetworkError?.call('There was a problem fetching the exchange rates '
           'from the server. Try again later.');
@@ -42,6 +47,10 @@ class CalculateScreenManager extends ChangeNotifier {
       refreshState = RefreshState.hidden;
     }
     notifyListeners();
+  }
+
+  String _formatCacheDate(DateTime date) {
+    return 'Updated: ${DateFormat('yyyy-MM-dd').format(date)}';
   }
 
   Future<void> forceRefresh() async {

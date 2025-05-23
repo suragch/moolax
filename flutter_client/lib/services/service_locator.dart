@@ -14,9 +14,9 @@ GetIt getIt = GetIt.instance;
 
 void setupServiceLocator() {
   // services
-  getIt.registerLazySingleton<WebApi>(() => WebApiImpl());
-  getIt.registerLazySingleton<StorageService>(() => StorageServiceImpl());
-  getIt.registerLazySingleton<CurrencyService>(() => CurrencyServiceImpl());
+  getIt.registerLazySingleton<WebApi>(() => WebApi());
+  getIt.registerLazySingleton<StorageService>(() => StorageService());
+  getIt.registerLazySingleton<CurrencyService>(() => CurrencyService());
 
   getIt.registerFactory<CalculateScreenManager>(() => CalculateScreenManager());
   getIt.registerFactory<ChooseFavoritesManager>(() => ChooseFavoritesManager());

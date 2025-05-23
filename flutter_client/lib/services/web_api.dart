@@ -2,18 +2,14 @@
 // See LICENSE for details.
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:http/http.dart' as http;
 import 'package:moolax/secrets.dart';
 
-abstract class WebApi {
-  Future<Map<String, Rate>?> fetchExchangeRates();
-  void purgeInMemoryCache();
-}
-
-class WebApiImpl implements WebApi {
+class WebApi {
   final _host = 'https://moolax.suragch.dev';
   // String get _host =>
   //     Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://127.0.0.1:8080';
@@ -26,39 +22,38 @@ class WebApiImpl implements WebApi {
   Map<String, Rate>? _rateCache;
 
   /// returns null for any internet problems
-  @override
   Future<Map<String, Rate>?> fetchExchangeRates() async {
     // use in-memory cache if available
     final rates = _rateCache;
     if (rates != null) {
-      print('getting rates from cache');
+      log('getting rates from cache');
       return rates;
     }
 
     // check the network connection
     final connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.none)) {
-      print('No Internet connection');
+      log('No Internet connection');
       return null;
     }
 
     // look the data up on the server
-    print('getting rates from the web');
+    log('getting rates from the web');
     final uri = Uri.parse('$_host/$_path');
     final response = await http.get(uri, headers: _headers);
     if (response.statusCode != 200) {
-      print('Unexpected status code: ${response.statusCode}');
-      print(response.body);
+      log('Unexpected status code: ${response.statusCode}');
+      log(response.body);
       return null;
     }
 
     // extract the data
-    print(response.body);
+    log(response.body);
     try {
       final jsonObject = json.decode(response.body);
       _rateCache = _createRateListFromRawMap(jsonObject);
     } on FormatException {
-      print('Server data malformatted');
+      log('Server data malformatted');
       return null;
     }
 
@@ -80,7 +75,6 @@ class WebApiImpl implements WebApi {
     );
   }
 
-  @override
   void purgeInMemoryCache() {
     _rateCache = null;
   }

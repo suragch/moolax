@@ -1,23 +1,15 @@
 // Copyright (c) 2019 Razeware LLC
 // See LICENSE for details.
 
+import 'dart:developer';
+
 import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/service_locator.dart';
 import 'package:moolax/services/storage_service.dart';
 import 'package:moolax/services/web_api.dart';
 
-abstract class CurrencyService {
-  Future<void> init();
-  // key is quote currency ISO code
-  Future<Map<String, Rate>> getAllExchangeRates({String base});
-  Future<List<Currency>> getFavoriteCurrencies();
-  Future<void> saveFavoriteCurrencies(List<Currency> data);
-  void Function(Duration)? staleCacheListener;
-  Future<void> purgeLocalCache();
-}
-
-class CurrencyServiceImpl implements CurrencyService {
+class CurrencyService {
   final _webApi = getIt<WebApi>();
   final _storageService = getIt<StorageService>();
 
@@ -25,20 +17,18 @@ class CurrencyServiceImpl implements CurrencyService {
 
   Map<String, Rate>? _rateCache;
 
-  @override
   Future<void> init() async {
     await _storageService.init();
   }
 
-  @override
   void Function(Duration p1)? staleCacheListener;
 
-  @override
+  /// key is quote currency ISO code
   Future<Map<String, Rate>> getAllExchangeRates({String? base}) async {
     // use the in-memory cache first
     var rates = _rateCache;
     if (rates != null && rates.isNotEmpty) {
-      print('in-memory cache');
+      log('in-memory cache');
       return _convertBaseCurrency(base, rates);
     }
 
@@ -47,7 +37,7 @@ class CurrencyServiceImpl implements CurrencyService {
     if (lapsedTime.inHours <= 24) {
       rates = _storageService.getExchangeRateData();
       if (rates != null && rates.isNotEmpty) {
-        print('using local storage');
+        log('using local storage');
         _rateCache = rates;
         return _convertBaseCurrency(base, rates);
       }
@@ -56,7 +46,7 @@ class CurrencyServiceImpl implements CurrencyService {
     // look it up on the web
     rates = await _webApi.fetchExchangeRates();
     if (rates != null && rates.isNotEmpty) {
-      print('using web');
+      log('using web');
       _storageService.cacheExchangeRateData(rates);
       _rateCache = rates;
       return _convertBaseCurrency(base, rates);
@@ -65,7 +55,7 @@ class CurrencyServiceImpl implements CurrencyService {
     // return stale cache if necessary
     rates = _storageService.getExchangeRateData();
     if (rates != null && rates.isNotEmpty) {
-      print('using stale cache');
+      log('using stale cache');
       if (lapsedTime.inDays > 30) {
         // notify the user that the exchange rate data is old
         staleCacheListener?.call(lapsedTime);
@@ -75,11 +65,10 @@ class CurrencyServiceImpl implements CurrencyService {
     }
 
     // return an empty map as a last resort
-    print('returning empty map');
+    log('returning empty map');
     return {};
   }
 
-  @override
   Future<List<Currency>> getFavoriteCurrencies() async {
     final favorites = _storageService.getFavoriteCurrencies();
     if (favorites.isEmpty) {
@@ -110,12 +99,10 @@ class CurrencyServiceImpl implements CurrencyService {
     );
   }
 
-  @override
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     await _storageService.saveFavoriteCurrencies(data);
   }
 
-  @override
   Future<void> purgeLocalCache() async {
     _rateCache = null;
     _webApi.purgeInMemoryCache();

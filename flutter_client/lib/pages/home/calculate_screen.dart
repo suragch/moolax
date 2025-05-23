@@ -55,20 +55,34 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
               )
             ],
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          body: Stack(
             children: [
-              Title(manager: manager),
-              InputBox(
-                manager: manager,
-                controller: _controller,
-                focusNode: _focusNode,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Title(manager: manager),
+                  InputBox(
+                    manager: manager,
+                    controller: _controller,
+                    focusNode: _focusNode,
+                  ),
+                  FavoritesList(
+                    manager: manager,
+                    controller: _controller,
+                    focusNode: _focusNode,
+                  ),
+                ],
               ),
-              FavoritesList(
-                manager: manager,
-                controller: _controller,
-                focusNode: _focusNode,
-              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0, right: 24.0),
+                  child: Text(
+                    manager.refreshDate,
+                    style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)),
+                  ),
+                ),
+              )
             ],
           ),
         );
