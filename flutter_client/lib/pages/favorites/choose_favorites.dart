@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:moolax/pages/favorites/choose_favorites_manager.dart';
-import 'package:moolax/pages/paywall/paywall.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoriteCurrencyScreen extends StatefulWidget {
@@ -65,32 +64,25 @@ class _ChooseFavoriteCurrencyScreenState extends State<ChooseFavoriteCurrencyScr
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Card(
-                        child: ProBanner(
-                          isVisible: item.showBanner,
-                          primaryColor: primaryColor,
-                          child: ListTile(
-                            leading: SizedBox(
-                              width: 40,
-                              child: Text(
-                                item.flag,
-                                style: const TextStyle(fontSize: 30),
-                              ),
+                        child: ListTile(
+                          leading: SizedBox(
+                            width: 40,
+                            child: Text(
+                              item.flag,
+                              style: const TextStyle(fontSize: 30),
                             ),
-                            title: Text(item.isoCode),
-                            subtitle: Text(item.longName),
-                            trailing: (item.isFavorite)
-                                ? Icon(Icons.favorite, color: primaryColor)
-                                : const Icon(Icons.favorite_border),
-                            onTap: () {
-                              if (item.showBanner) {
-                                _showPaywall(context);
-                              } else {
-                                manager.toggleFavoriteStatus(item.isoCode);
-                              }
-                            },
                           ),
+                          title: Text(item.isoCode),
+                          subtitle: Text(item.longName),
+                          trailing: (item.isFavorite)
+                              ? Icon(Icons.favorite, color: primaryColor)
+                              : const Icon(Icons.favorite_border),
+                          onTap: () {
+                            manager.toggleFavoriteStatus(item.isoCode);
+                          },
                         ),
                       ),
+                      // ),
                     );
                   },
                 );
@@ -98,43 +90,6 @@ class _ChooseFavoriteCurrencyScreenState extends State<ChooseFavoriteCurrencyScr
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-Future<void> _showPaywall(BuildContext context) async {
-  final height = MediaQuery.sizeOf(context).height * 0.8;
-  await showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    constraints: BoxConstraints(maxHeight: height),
-    builder: (context) => const PaywallPage(),
-  );
-}
-
-class ProBanner extends StatelessWidget {
-  const ProBanner({
-    super.key,
-    required this.child,
-    required this.primaryColor,
-    required this.isVisible,
-  });
-
-  final Color primaryColor;
-  final Widget child;
-  final bool isVisible;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isVisible) return child;
-    return ClipRRect(
-      // borderRadius: BorderRadius.circular(50),
-      child: Banner(
-        message: 'Pro',
-        location: BannerLocation.topEnd,
-        color: primaryColor,
-        child: child,
       ),
     );
   }

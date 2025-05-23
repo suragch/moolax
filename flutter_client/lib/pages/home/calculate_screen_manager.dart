@@ -7,7 +7,6 @@ import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
-import 'package:moolax/services/iap_service.dart';
 import 'package:moolax/services/service_locator.dart';
 
 enum RefreshState { hidden, showingButton, refreshing }
@@ -43,8 +42,6 @@ class CalculateScreenManager extends ChangeNotifier {
       refreshState = RefreshState.hidden;
     }
     notifyListeners();
-    await getIt<IapService>().init();
-    await getIt<IapService>().loadProducts();
   }
 
   Future<void> forceRefresh() async {
@@ -146,12 +143,6 @@ class CalculateScreenManager extends ChangeNotifier {
     favorites.removeWhere((currency) => currency.isoCode == isoCode);
     _currencyService.saveFavoriteCurrencies(favorites);
     _quoteCurrencies.removeWhere((currency) => currency.isoCode == isoCode);
-  }
-
-  @override
-  void dispose() {
-    getIt<IapService>().dispose();
-    super.dispose();
   }
 }
 

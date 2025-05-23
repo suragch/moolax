@@ -6,7 +6,6 @@ import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/currency_service.dart';
 import 'package:moolax/core/iso_data.dart';
-import 'package:moolax/services/iap_service.dart';
 import 'package:moolax/services/service_locator.dart';
 
 class ChooseFavoritesManager {
@@ -23,7 +22,6 @@ class ChooseFavoritesManager {
   }
 
   List<FavoritePresentation> _prepareChoicePresentation(Map<String, Rate> rates) {
-    final iapService = getIt<IapService>();
     List<FavoritePresentation> list = [];
     for (final rate in rates.values) {
       String code = rate.quoteCurrency;
@@ -33,15 +31,9 @@ class ChooseFavoritesManager {
         isoCode: code,
         longName: IsoData.longNameOf(code),
         isFavorite: isFavorite,
-        showBanner: IsoData.isPro(code) && !iapService.hasPro,
       ));
     }
     list.sort((a, b) {
-      // Show free currencies before pro currencies
-      if (a.showBanner != b.showBanner) {
-        return a.showBanner ? 1 : -1;
-      }
-      // Then sort alphabetically
       return a.isoCode.compareTo(b.isoCode);
     });
     return list;
@@ -90,14 +82,12 @@ class FavoritePresentation {
   final String isoCode;
   final String longName;
   final bool isFavorite;
-  final bool showBanner;
 
   FavoritePresentation({
     required this.flag,
     required this.isoCode,
     required this.longName,
     required this.isFavorite,
-    required this.showBanner,
   });
 }
 
@@ -126,7 +116,6 @@ class FavoritesNotifier extends ValueNotifier<List<FavoritePresentation>> {
       isoCode: item.isoCode,
       longName: item.longName,
       isFavorite: isFavorite,
-      showBanner: item.showBanner,
     );
     filter(_filter);
     notifyListeners();

@@ -12,34 +12,6 @@ class IsoData {
     return data[code]?['name'] ?? 'unknown name';
   }
 
-  static bool isPro(String code) {
-    return !freeVersionCurrencies.contains(code);
-  }
-
-  static const freeVersionCurrencies = {
-    'USD',
-    'EUR',
-    'GBP',
-    'CAD',
-    'AUD',
-    'JPY',
-    'CNY',
-    'CHF',
-    'HKD',
-    'INR',
-    'MXN',
-    'ZAR',
-    'SGD',
-    'NZD',
-    'SEK',
-    'KRW',
-    'RUB',
-    'BRL',
-    'ARS',
-    'TRY',
-    'MNT'
-  };
-
   // ISO data comes from https://en.wikipedia.org/wiki/ISO_4217
   static final Map<String, Map<String, String>> data = {
     'AED': {'name': 'United Arab Emirates dirhams', 'flag': '🇦🇪'},
@@ -61,7 +33,6 @@ class IsoData {
     'BMD': {'name': 'Bermudian dollars', 'flag': '🇧🇲'},
     'BND': {'name': 'Brunei dollars', 'flag': '🇧🇳'},
     'BOB': {'name': 'Boliviano', 'flag': '🇧🇴'},
-    'BOV': {'name': 'Bolivian mvdol', 'flag': '🇧🇴'},
     'BRL': {'name': 'Brazilian reals', 'flag': '🇧🇷'},
     'BSD': {'name': 'Bahamian dollars', 'flag': '🇧🇸'},
     'BTC': {'name': 'Bitcoin', 'flag': '₿'},
@@ -72,14 +43,12 @@ class IsoData {
     'BZD': {'name': 'Belize dollars', 'flag': '🇧🇿'},
     'CAD': {'name': 'Canadian dollars', 'flag': '🇨🇦'},
     'CDF': {'name': 'Congolese francs', 'flag': '🇨🇩'},
-    'CHE': {'name': 'WIR euros', 'flag': '🇨🇭'},
     'CHF': {'name': 'Swiss francs', 'flag': '🇨🇭'},
-    'CHW': {'name': 'WIR francs', 'flag': '🇨🇭'},
     'CLF': {'name': 'Unidad de Fomento', 'flag': '🇨🇱'},
     'CLP': {'name': 'Chilean pesos', 'flag': '🇨🇱'},
     'CNY': {'name': 'Chinese yuan (renminbi)', 'flag': '🇨🇳'},
+    'CNH': {'name': 'Chinese yuan (offshore)', 'flag': '🇨🇳'},
     'COP': {'name': 'Colombian pesos', 'flag': '🇨🇴'},
-    'COU': {'name': 'Unidad de Valor Real (UVR)', 'flag': '🇨🇴'},
     'CRC': {'name': 'Costa Rican colons', 'flag': '🇨🇷'},
     'CUC': {'name': 'Cuban convertible pesos', 'flag': '🇨🇺'},
     'CUP': {'name': 'Cuban pesos', 'flag': '🇨🇺'},
@@ -144,13 +113,11 @@ class IsoData {
     'MMK': {'name': 'Myanmar kyat', 'flag': '🇲🇲'},
     'MNT': {'name': 'Mongolian tögrög', 'flag': '🇲🇳'},
     'MOP': {'name': 'Macanese pataca', 'flag': '🇲🇴'},
-    'MRO': {'name': 'Mauritanian ouguiya', 'flag': '🇲🇷'},
     'MRU': {'name': 'Mauritanian ouguiya', 'flag': '🇲🇷'},
     'MUR': {'name': 'Mauritian rupees', 'flag': '🇲🇺'},
     'MVR': {'name': 'Maldivian rufiyaa', 'flag': '🇲🇻'},
     'MWK': {'name': 'Malawian kwacha', 'flag': '🇲🇼'},
     'MXN': {'name': 'Mexican pesos', 'flag': '🇲🇽'},
-    'MXV': {'name': 'Mexican Unidad de Inversion (UDI)', 'flag': '🇲🇽'},
     'MYR': {'name': 'Malaysian ringgit', 'flag': '🇲🇾'},
     'MZN': {'name': 'Mozambican metical', 'flag': '🇲🇿'},
     'NAD': {'name': 'Namibian dollars', 'flag': '🇳🇦'},
@@ -183,9 +150,7 @@ class IsoData {
     'SLL': {'name': 'Sierra Leonean leone (old leone)', 'flag': '🇸🇱'},
     'SOS': {'name': 'Somali shillings', 'flag': '🇸🇴'},
     'SRD': {'name': 'Surinamese dollars', 'flag': '🇸🇷'},
-    'SSP': {'name': 'South Sudanese pounds', 'flag': '🇸🇸'},
     'STD': {'name': 'São Tomé and Príncipe dobra', 'flag': '🇸🇹'},
-    'STN': {'name': 'São Tomé and Príncipe dobra', 'flag': '🇸🇹'},
     'SVC': {'name': 'Salvadoran colón', 'flag': '🇸🇻'},
     'SYP': {'name': 'Syrian pounds', 'flag': '🇸🇾'},
     'SZL': {'name': 'Swazi lilangeni', 'flag': '🇸🇿'},
@@ -201,19 +166,8 @@ class IsoData {
     'UAH': {'name': 'Ukrainian hryvnia', 'flag': '🇺🇦'},
     'UGX': {'name': 'Uganda shillings', 'flag': '🇺🇬'},
     'USD': {'name': 'United States dollars', 'flag': '🇺🇸'},
-    'USN': {
-      'name': 'United States dollar (next day) (funds code)',
-      'flag': '🇺🇸'
-    },
-    'UYI': {
-      'name': 'Uruguay Peso en Unidades Indexadas (URUIURUI) (funds code)',
-      'flag': '🇺🇾'
-    },
     'UYU': {'name': 'Uruguayan pesos', 'flag': '🇺🇾'},
-    'UYW': {'name': 'Unidad previsional', 'flag': '🇺🇾'},
     'UZS': {'name': 'Uzbekistan sum', 'flag': '🇺🇿'},
-    'VED': {'name': 'Venezuelan digital bolívars', 'flag': '🇻🇪'},
-    'VEF': {'name': 'Venezuelan bolívar fuerte', 'flag': '🇻🇪'},
     'VES': {'name': 'Venezuelan sovereign bolívars', 'flag': '🇻🇪'},
     'VND': {'name': 'Vietnamese dong', 'flag': '🇻🇳'},
     'VUV': {'name': 'Vanuatu vatu', 'flag': '🇻🇺'},
@@ -221,35 +175,10 @@ class IsoData {
     'XAF': {'name': 'Central African CFA francs', 'flag': '🌍'},
     'XAG': {'name': 'Silver (one troy ounce)', 'flag': '🥈'},
     'XAU': {'name': 'Gold (one troy ounce)', 'flag': '🥇'},
-    'XBA': {
-      'name': 'European Composite Unit (EURCO) (bond market unit)',
-      'flag': '',
-    },
-    'XBB': {
-      'name': 'European Monetary Unit (E.M.U.-6) (bond market unit)',
-      'flag': ''
-    },
-    'XBC': {
-      'name': 'European Unit of Account 9 (E.U.A.-9) (bond market unit)',
-      'flag': ''
-    },
-    'XBD': {
-      'name': 'European Unit of Account 17 (E.U.A.-17) (bond market unit)',
-      'flag': ''
-    },
     'XCD': {'name': 'East Caribbean dollars', 'flag': r'🏝️'},
     'XDR': {'name': 'Special drawing rights (IMF)', 'flag': '🇺🇳'},
     'XOF': {'name': 'West African CFA francs', 'flag': '🌍'},
-    'XPD': {'name': 'Palladium (one troy ounce)', 'flag': ''},
     'XPF': {'name': 'CFP francs', 'flag': '🏝️'},
-    'XPT': {'name': 'Platinum (one troy ounce)', 'flag': ''},
-    'XSU': {
-      'name': 'Unified System for Regional Compensation (SUCRE)',
-      'flag': ''
-    },
-    'XTS': {'name': 'Code reserved for testing', 'flag': ''},
-    'XUA': {'name': 'ADB Unit of Account', 'flag': ''},
-    'XXX': {'name': 'No currency', 'flag': ''},
     'YER': {'name': 'Yemeni rials', 'flag': '🇾🇪'},
     'ZAR': {'name': 'South African rand', 'flag': '🇿🇦'},
     'ZMK': {'name': 'Zambian kwacha', 'flag': '🇿🇲'},
