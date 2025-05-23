@@ -45,7 +45,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
               if (manager.refreshState != RefreshState.hidden) _getRefreshWidget(),
               IconButton(
                 icon: Icon(
-                  Icons.favorite,
+                  Icons.add,
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async {
