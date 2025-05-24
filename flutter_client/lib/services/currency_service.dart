@@ -3,6 +3,7 @@
 
 import 'dart:developer';
 
+import 'package:http/http.dart';
 import 'package:moolax/core/currency.dart';
 import 'package:moolax/core/rate.dart';
 import 'package:moolax/services/service_locator.dart';
@@ -21,52 +22,105 @@ class CurrencyService {
     await _storageService.init();
   }
 
-  void Function(Duration p1)? staleCacheListener;
-
   /// key is quote currency ISO code
-  Future<Map<String, Rate>> getAllExchangeRates({String? base}) async {
-    // use the in-memory cache first
-    var rates = _rateCache;
-    if (rates != null && rates.isNotEmpty) {
-      log('in-memory cache');
-      return _convertBaseCurrency(base, rates);
+  Future<Map<String, Rate>> getAllExchangeRates({
+    bool preferWebOverCache = false,
+    String? base,
+    void Function(String)? onError,
+  }) async {
+    // Skip the cache if the user has requested fresh data
+    if (preferWebOverCache) {
+      final rates = await _getRatesFromServer(base: base, onError: onError);
+      if (rates != null) {
+        _rateCache = rates;
+        return rates;
+      }
     }
 
-    // look it up in storage next
+    // Prefer in-memory cache
+    var rates = await _getInMemoryCache(base);
+    if (rates != null) {
+      return rates;
+    }
+
+    // If the cache is less than 24 hours old, use it
     final lapsedTime = _storageService.timeSinceLastRatesCache();
+    log('Time since last cache: $lapsedTime');
     if (lapsedTime.inHours <= 24) {
-      rates = _storageService.getExchangeRateData();
-      if (rates != null && rates.isNotEmpty) {
-        log('using local storage');
+      rates = await _getStoredCache(base);
+      if (rates != null) {
         _rateCache = rates;
-        return _convertBaseCurrency(base, rates);
+        return rates;
       }
     }
 
     // look it up on the web
-    rates = await _webApi.fetchExchangeRates();
-    if (rates != null && rates.isNotEmpty) {
-      log('using web');
-      _storageService.cacheExchangeRateData(rates);
+    rates = await _getRatesFromServer(base: base, onError: onError);
+    if (rates != null) {
       _rateCache = rates;
-      return _convertBaseCurrency(base, rates);
+      return rates;
     }
 
     // return stale cache if necessary
-    rates = _storageService.getExchangeRateData();
-    if (rates != null && rates.isNotEmpty) {
-      log('using stale cache');
-      if (lapsedTime.inDays > 30) {
-        // notify the user that the exchange rate data is old
-        staleCacheListener?.call(lapsedTime);
-      }
+    rates = await _getStoredCache(base);
+    if (rates != null) {
       _rateCache = rates;
-      return _convertBaseCurrency(base, rates);
+      return rates;
     }
 
     // return an empty map as a last resort
     log('returning empty map');
     return {};
+  }
+
+  Future<Map<String, Rate>?> _getInMemoryCache(String? base) async {
+    if (_rateCache != null && _rateCache!.isNotEmpty) {
+      log('in-memory cache');
+      return _convertBaseCurrency(base, _rateCache!);
+    }
+    return null;
+  }
+
+  Future<Map<String, Rate>?> _getStoredCache(String? base) async {
+    final rates = _storageService.getExchangeRateData();
+    if (rates != null && rates.isNotEmpty) {
+      log('using local storage');
+      _rateCache = rates;
+      return _convertBaseCurrency(base, rates);
+    }
+    return null;
+  }
+
+  Future<Map<String, Rate>?> _getRatesFromServer({
+    String? base,
+    void Function(String)? onError,
+  }) async {
+    log('attempting to connect to the server');
+    Map<String, Rate>? rates;
+    try {
+      rates = await _webApi.fetchExchangeRates();
+    } on NoInternetException catch (e) {
+      // Don't tell the user. Just use a cached value.
+      log('NoInternetException: $e');
+      onError?.call('It appears you aren\t connected to the internet.');
+    } on ApiException catch (e) {
+      log('ApiException: $e');
+      onError?.call('The server returned an error code of ${e.statusCode}.');
+    } on MalformedDataException catch (e) {
+      log('MalformedDataException: $e');
+      onError?.call('There was a problem with the data from the server.');
+    } on ClientException catch (e) {
+      // Don't tell the user. Just use a cached value.
+      log('ClientException: $e');
+      onError?.call('There was a problem connecting to the internet.');
+    }
+    if (rates != null && rates.isNotEmpty) {
+      log('Successfully fetched rates from the server');
+      await _storageService.cacheExchangeRateData(rates);
+      _rateCache = rates;
+      return _convertBaseCurrency(base, rates);
+    }
+    return null;
   }
 
   Future<List<Currency>> getFavoriteCurrencies() async {
@@ -101,11 +155,5 @@ class CurrencyService {
 
   Future<void> saveFavoriteCurrencies(List<Currency> data) async {
     await _storageService.saveFavoriteCurrencies(data);
-  }
-
-  Future<void> purgeLocalCache() async {
-    _rateCache = null;
-    _webApi.purgeInMemoryCache();
-    await _storageService.purgeLocalCache();
   }
 }

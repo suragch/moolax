@@ -13,7 +13,7 @@ import 'package:moolax/services/storage_service.dart';
 enum RefreshState { hidden, showingButton, refreshing }
 
 class CalculateScreenManager extends ChangeNotifier {
-  var refreshState = RefreshState.hidden;
+  // var refreshState = RefreshState.hidden;
   // final updateNotifier = ValueNotifier<String>('');
   String refreshDate = '';
 
@@ -25,22 +25,22 @@ class CalculateScreenManager extends ChangeNotifier {
   List<CurrencyPresentation> _quoteCurrencies = [];
   Map<String, Rate> _rates = {};
 
-  static final defaultBaseCurrency = CurrencyPresentation(flag: '', isoCode: '', longName: '', amount: '');
+  static final defaultBaseCurrency = CurrencyPresentation(
+    flag: '',
+    isoCode: '',
+    longName: '',
+    amount: '',
+  );
 
-  Future<void> loadData() async {
+  Future<void> loadData({bool preferWebOverCache = false}) async {
     await _loadCurrencies();
     notifyListeners();
-    _rates = await _currencyService.getAllExchangeRates(base: _baseCurrency.isoCode);
+    _rates = await _currencyService.getAllExchangeRates(
+      preferWebOverCache: preferWebOverCache,
+      base: _baseCurrency.isoCode,
+      onError: onNetworkError,
+    );
     refreshDate = _formatCacheDate(_storageService.lastCacheDate);
-    if (_rates.isEmpty) {
-      onNetworkError?.call(
-        'There was a problem fetching the exchange rates '
-        'from the server. Try again later.',
-      );
-      refreshState = RefreshState.showingButton;
-    } else {
-      refreshState = RefreshState.hidden;
-    }
     notifyListeners();
   }
 
@@ -49,10 +49,7 @@ class CalculateScreenManager extends ChangeNotifier {
   }
 
   Future<void> forceRefresh() async {
-    refreshState = RefreshState.refreshing;
-    notifyListeners();
-    await _currencyService.purgeLocalCache();
-    await loadData();
+    await loadData(preferWebOverCache: true);
   }
 
   Future<void> _loadCurrencies() async {
@@ -110,7 +107,10 @@ class CalculateScreenManager extends ChangeNotifier {
   }
 
   void _updateCurrenciesFor(double baseAmount) {
-    final formatter = NumberFormat.decimalPatternDigits(locale: 'en_us', decimalDigits: 2);
+    final formatter = NumberFormat.decimalPatternDigits(
+      locale: 'en_us',
+      decimalDigits: 2,
+    );
     for (final currency in _quoteCurrencies) {
       final rate = _rates[currency.isoCode]?.exchangeRate ?? 0.0;
       currency.amount = formatter.format(baseAmount * rate);
@@ -158,7 +158,12 @@ class CurrencyPresentation {
   final String longName;
   String amount;
 
-  CurrencyPresentation({required this.flag, required this.isoCode, required this.longName, required this.amount});
+  CurrencyPresentation({
+    required this.flag,
+    required this.isoCode,
+    required this.longName,
+    required this.amount,
+  });
 
   @override
   String toString() {

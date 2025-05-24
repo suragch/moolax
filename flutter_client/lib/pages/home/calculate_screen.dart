@@ -26,11 +26,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
   }
 
   void _handleNetworkError(String errorMessage) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(errorMessage),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
   @override
@@ -42,17 +38,13 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
           appBar: AppBar(
             title: const Text('Moola X'),
             actions: [
-              if (manager.refreshState != RefreshState.hidden) _getRefreshWidget(),
               IconButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Theme.of(context).primaryColor,
-                ),
+                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
                 onPressed: () async {
                   await _goToFavorites(context);
                   manager.refreshFavorites(_controller.text);
                 },
-              )
+              ),
             ],
           ),
           body: Stack(
@@ -61,15 +53,12 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Title(manager: manager),
-                  InputBox(
-                    manager: manager,
-                    controller: _controller,
-                    focusNode: _focusNode,
-                  ),
+                  InputBox(manager: manager, controller: _controller, focusNode: _focusNode),
                   FavoritesList(
                     manager: manager,
                     controller: _controller,
                     focusNode: _focusNode,
+                    onRefresh: _refreshData,
                   ),
                 ],
               ),
@@ -82,7 +71,7 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
                     style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -90,26 +79,9 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
     );
   }
 
-  Widget _getRefreshWidget() {
-    if (manager.refreshState == RefreshState.showingButton) {
-      return IconButton(
-        icon: Icon(
-          Icons.refresh,
-          color: Theme.of(context).primaryColor,
-        ),
-        onPressed: () async {
-          manager.forceRefresh();
-        },
-      );
-    }
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: 24,
-        height: 24,
-        child: CircularProgressIndicator(),
-      ),
-    );
+  Future<void> _refreshData() async {
+    await manager.forceRefresh();
+    manager.calculateExchange(_controller.text);
   }
 
   @override
@@ -120,19 +92,11 @@ class _CalculateCurrencyScreenState extends State<CalculateCurrencyScreen> {
 }
 
 Future<void> _goToFavorites(BuildContext context) async {
-  await Navigator.push(
-    context,
-    MaterialPageRoute<void>(
-      builder: (context) => const ChooseFavoriteCurrencyScreen(),
-    ),
-  );
+  await Navigator.push(context, MaterialPageRoute<void>(builder: (context) => const ChooseFavoriteCurrencyScreen()));
 }
 
 class Title extends StatelessWidget {
-  const Title({
-    super.key,
-    required this.manager,
-  });
+  const Title({super.key, required this.manager});
 
   final CalculateScreenManager manager;
 
@@ -140,20 +104,13 @@ class Title extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 32, top: 32, right: 32, bottom: 5),
-      child: Text(
-        manager.baseCurrency.longName,
-      ),
+      child: Text(manager.baseCurrency.longName),
     );
   }
 }
 
 class InputBox extends StatelessWidget {
-  const InputBox({
-    super.key,
-    required this.controller,
-    required this.manager,
-    required this.focusNode,
-  });
+  const InputBox({super.key, required this.controller, required this.manager, required this.focusNode});
 
   final TextEditingController controller;
   final CalculateScreenManager manager;
@@ -175,18 +132,13 @@ class InputBox extends StatelessWidget {
               width: 50,
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  manager.baseCurrency.flag,
-                  style: const TextStyle(fontSize: 30),
-                ),
+                child: Text(manager.baseCurrency.flag, style: const TextStyle(fontSize: 30)),
               ),
             ),
           ),
           hintStyle: const TextStyle(fontSize: 14),
           hintText: 'Amount to exchange',
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          ),
+          border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(20),
           suffix: IconButton(
             icon: const Icon(Icons.clear),
@@ -209,11 +161,13 @@ class FavoritesList extends StatelessWidget {
     required this.manager,
     required this.controller,
     required this.focusNode,
+    required this.onRefresh,
   });
 
   final CalculateScreenManager manager;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -229,41 +183,38 @@ class FavoritesList extends StatelessWidget {
       );
     }
     return Expanded(
-      child: ListView.builder(
-        itemCount: manager.quoteCurrencies.length,
-        itemBuilder: (context, index) {
-          final currency = manager.quoteCurrencies[index];
-          return Dismissible(
-            key: UniqueKey(),
-            onDismissed: (direction) {
-              manager.unfavorite(currency.isoCode);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Card(
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 40,
-                    child: Text(
-                      currency.flag,
-                      style: const TextStyle(fontSize: 30),
-                    ),
+      child: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: ListView.builder(
+          itemCount: manager.quoteCurrencies.length,
+          itemBuilder: (context, index) {
+            final currency = manager.quoteCurrencies[index];
+            return Dismissible(
+              key: UniqueKey(),
+              onDismissed: (direction) {
+                manager.unfavorite(currency.isoCode);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Card(
+                  child: ListTile(
+                    leading: SizedBox(width: 40, child: Text(currency.flag, style: const TextStyle(fontSize: 30))),
+                    title: Text(currency.amount),
+                    subtitle: Text(currency.longName),
+                    onTap: () {
+                      manager.setNewBaseCurrency(index);
+                      controller.clear();
+                      focusNode.requestFocus();
+                    },
+                    onLongPress: () {
+                      // delete
+                    },
                   ),
-                  title: Text(currency.amount),
-                  subtitle: Text(currency.longName),
-                  onTap: () {
-                    manager.setNewBaseCurrency(index);
-                    controller.clear();
-                    focusNode.requestFocus();
-                  },
-                  onLongPress: () {
-                    // delete
-                  },
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

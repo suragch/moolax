@@ -34,7 +34,8 @@ class WebApi {
     final connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.none)) {
       log('No Internet connection');
-      return null;
+      throw NoInternetException();
+      // return null;
     }
 
     // look the data up on the server
@@ -44,7 +45,8 @@ class WebApi {
     if (response.statusCode != 200) {
       log('Unexpected status code: ${response.statusCode}');
       log(response.body);
-      return null;
+      throw ApiException(response.statusCode, response.body);
+      // return null;
     }
 
     // extract the data
@@ -54,7 +56,8 @@ class WebApi {
       _rateCache = _createRateListFromRawMap(jsonObject);
     } on FormatException {
       log('Server data malformatted');
-      return null;
+      throw MalformedDataException();
+      // return null;
     }
 
     return _rateCache;
@@ -74,8 +77,26 @@ class WebApi {
       ),
     );
   }
+}
 
-  void purgeInMemoryCache() {
-    _rateCache = null;
-  }
+class NoInternetException implements Exception {
+  final String message = 'No Internet connection available';
+  @override
+  String toString() => message;
+}
+
+class ApiException implements Exception {
+  final int statusCode;
+  final String body;
+
+  ApiException(this.statusCode, this.body);
+
+  @override
+  String toString() => 'API Error: Status code $statusCode\nBody: $body';
+}
+
+class MalformedDataException implements Exception {
+  final String message = 'Server returned malformed data';
+  @override
+  String toString() => message;
 }

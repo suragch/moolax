@@ -53,7 +53,7 @@ class StorageService {
     //final list = data.map((rate) => rate.toJson()).toList();
     String jsonString = jsonEncode(list);
     await prefs.setString(_exchangeRateKey, jsonString);
-    _resetCacheTimeToNow();
+    await _resetCacheTimeToNow();
   }
 
   List<Currency> getFavoriteCurrencies() {
@@ -104,12 +104,6 @@ class StorageService {
 
   Future<void> _resetCacheTimeToNow() async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt(_lastCacheTimeKey, timestamp);
-  }
-
-  Future<void> purgeLocalCache() async {
-    await prefs.remove(_lastCacheTimeKey);
-    await prefs.remove(_exchangeRateKey);
+    await prefs.setInt(_lastCacheTimeKey, timestamp);
   }
 }
