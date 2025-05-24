@@ -3,7 +3,7 @@ description: "Moola X: A foreign currency converter for travelers"
 version: 3.0.0+4
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.8.0
 
 dependencies:
   connectivity_plus: ^6.0.4
