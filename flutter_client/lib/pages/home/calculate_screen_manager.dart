@@ -25,23 +25,18 @@ class CalculateScreenManager extends ChangeNotifier {
   List<CurrencyPresentation> _quoteCurrencies = [];
   Map<String, Rate> _rates = {};
 
-  static final defaultBaseCurrency = CurrencyPresentation(
-    flag: '',
-    isoCode: '',
-    longName: '',
-    amount: '',
-  );
+  static final defaultBaseCurrency = CurrencyPresentation(flag: '', isoCode: '', longName: '', amount: '');
 
   Future<void> loadData() async {
     await _loadCurrencies();
     notifyListeners();
-    _rates = await _currencyService.getAllExchangeRates(
-      base: _baseCurrency.isoCode,
-    );
+    _rates = await _currencyService.getAllExchangeRates(base: _baseCurrency.isoCode);
     refreshDate = _formatCacheDate(_storageService.lastCacheDate);
     if (_rates.isEmpty) {
-      onNetworkError?.call('There was a problem fetching the exchange rates '
-          'from the server. Try again later.');
+      onNetworkError?.call(
+        'There was a problem fetching the exchange rates '
+        'from the server. Try again later.',
+      );
       refreshState = RefreshState.showingButton;
     } else {
       refreshState = RefreshState.hidden;
@@ -83,12 +78,14 @@ class CalculateScreenManager extends ChangeNotifier {
     List<CurrencyPresentation> quotes = [];
     for (int i = 1; i < currencies.length; i++) {
       String code = currencies[i].isoCode;
-      quotes.add(CurrencyPresentation(
-        flag: IsoData.flagOf(code),
-        isoCode: code,
-        longName: IsoData.longNameOf(code),
-        amount: 0.toStringAsFixed(2),
-      ));
+      quotes.add(
+        CurrencyPresentation(
+          flag: IsoData.flagOf(code),
+          isoCode: code,
+          longName: IsoData.longNameOf(code),
+          amount: 0.toStringAsFixed(2),
+        ),
+      );
     }
     return quotes;
   }
@@ -113,10 +110,7 @@ class CalculateScreenManager extends ChangeNotifier {
   }
 
   void _updateCurrenciesFor(double baseAmount) {
-    final formatter = NumberFormat.decimalPatternDigits(
-      locale: 'en_us',
-      decimalDigits: 2,
-    );
+    final formatter = NumberFormat.decimalPatternDigits(locale: 'en_us', decimalDigits: 2);
     for (final currency in _quoteCurrencies) {
       final rate = _rates[currency.isoCode]?.exchangeRate ?? 0.0;
       currency.amount = formatter.format(baseAmount * rate);
@@ -152,6 +146,7 @@ class CalculateScreenManager extends ChangeNotifier {
     favorites.removeWhere((currency) => currency.isoCode == isoCode);
     _currencyService.saveFavoriteCurrencies(favorites);
     _quoteCurrencies.removeWhere((currency) => currency.isoCode == isoCode);
+    notifyListeners();
   }
 }
 
@@ -163,12 +158,7 @@ class CurrencyPresentation {
   final String longName;
   String amount;
 
-  CurrencyPresentation({
-    required this.flag,
-    required this.isoCode,
-    required this.longName,
-    required this.amount,
-  });
+  CurrencyPresentation({required this.flag, required this.isoCode, required this.longName, required this.amount});
 
   @override
   String toString() {
